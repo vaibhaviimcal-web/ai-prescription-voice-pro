@@ -1,15 +1,24 @@
 // INLINE VOICE RECOGNITION SYSTEM
-// Each input field gets its own voice button with configurable auto-stop
+// Each input field gets its own voice button with field-specific auto-stop timeouts
 
 let currentFieldRecognition = null;
 let currentActiveField = null;
 let silenceTimer = null;
 let lastTranscriptTime = null;
 
-// CONFIGURABLE SETTINGS
+// FIELD-SPECIFIC TIMEOUT CONFIGURATION
+const FIELD_TIMEOUTS = {
+    'patientName': 2000,        // 2 seconds - Quick name entry
+    'patientAge': 2000,         // 2 seconds - Just a number
+    'symptoms': 5000,           // 5 seconds - Detailed medical descriptions
+    'medicalHistory': 5000,     // 5 seconds - Complex history
+    'dictation': 5000           // 5 seconds - Long-form dictation
+};
+
+// GLOBAL VOICE CONFIGURATION
 const VOICE_CONFIG = {
-    // Auto-stop after X seconds of silence (user configurable)
-    silenceTimeout: 2000, // 2 seconds default (can be changed: 1000 = 1s, 3000 = 3s, etc.)
+    // Default timeout for fields not in FIELD_TIMEOUTS
+    defaultTimeout: 3000,
     
     // Maximum recording time (safety limit)
     maxRecordingTime: 30000, // 30 seconds max
@@ -22,6 +31,11 @@ const VOICE_CONFIG = {
     beepFrequency: 800,
     beepDuration: 0.1
 };
+
+// Get timeout for specific field
+function getFieldTimeout(fieldId) {
+    return FIELD_TIMEOUTS[fieldId] || VOICE_CONFIG.defaultTimeout;
+}
 
 // Initialize field-specific voice recognition
 function initFieldVoiceRecognition() {
@@ -84,20 +98,22 @@ function initFieldVoiceRecognition() {
     }
 }
 
-// Start silence countdown timer
+// Start silence countdown timer with field-specific timeout
 function startSilenceCountdown() {
     resetSilenceTimer();
+    
+    const timeout = getFieldTimeout(currentActiveField);
     
     silenceTimer = setTimeout(() => {
         // Check if enough time has passed since last speech
         const timeSinceLastSpeech = Date.now() - (lastTranscriptTime || Date.now());
         
-        if (timeSinceLastSpeech >= VOICE_CONFIG.silenceTimeout) {
+        if (timeSinceLastSpeech >= timeout) {
             // Auto-stop due to silence
             stopFieldVoice();
-            showAutoStopNotification();
+            showAutoStopNotification(timeout);
         }
-    }, VOICE_CONFIG.silenceTimeout);
+    }, timeout);
 }
 
 // Reset silence timer
@@ -109,13 +125,13 @@ function resetSilenceTimer() {
 }
 
 // Show notification that auto-stop occurred
-function showAutoStopNotification() {
+function showAutoStopNotification(timeout) {
     const statusDiv = document.getElementById('voiceStatus');
     if (statusDiv) {
         statusDiv.innerHTML = `
             <div class="flex items-center space-x-2">
                 <i class="fas fa-check-circle text-green-500"></i>
-                <span class="text-sm font-semibold text-green-700">Voice input completed (auto-stopped after ${VOICE_CONFIG.silenceTimeout/1000}s silence)</span>
+                <span class="text-sm font-semibold text-green-700">Voice input completed (auto-stopped after ${timeout/1000}s silence)</span>
             </div>
         `;
         
@@ -149,20 +165,25 @@ function startFieldVoice(fieldId) {
         lastTranscriptTime = Date.now();
         currentFieldRecognition.start();
         
+        // Get field-specific timeout
+        const timeout = getFieldTimeout(fieldId);
+        
         // Update UI
         const voiceBtn = event.target.closest('.voice-btn');
         if (voiceBtn) {
             voiceBtn.classList.add('listening');
         }
         
-        // Show status indicator
+        // Show status indicator with field-specific timeout
         const statusDiv = document.getElementById('voiceStatus');
         const fieldNameSpan = document.getElementById('voiceFieldName');
         if (statusDiv && fieldNameSpan) {
             const fieldNames = {
                 'patientName': 'Patient Name',
                 'patientAge': 'Age',
-                'symptoms': 'Symptoms'
+                'symptoms': 'Symptoms',
+                'medicalHistory': 'Medical History',
+                'dictation': 'Dictation'
             };
             fieldNameSpan.textContent = `(${fieldNames[fieldId] || fieldId})`;
             statusDiv.innerHTML = `
@@ -170,7 +191,7 @@ function startFieldVoice(fieldId) {
                     <div class="w-2 h-2 bg-red-500 rounded-full pulse-animation"></div>
                     <span class="text-sm font-semibold text-red-700">Listening... <span id="voiceFieldName">${fieldNameSpan.textContent}</span></span>
                 </div>
-                <p class="text-xs text-red-600 mt-1">Speak clearly. Auto-stops after ${VOICE_CONFIG.silenceTimeout/1000}s silence or click mic to stop.</p>
+                <p class="text-xs text-red-600 mt-1">Speak clearly. Auto-stops after ${timeout/1000}s silence or click mic to stop.</p>
             `;
             statusDiv.classList.remove('hidden');
         }
@@ -249,6 +270,34 @@ function playBeep() {
     }
 }
 
+// Update field-specific timeout (can be called from settings)
+function updateFieldTimeout(fieldId, timeout) {
+    FIELD_TIMEOUTS[fieldId] = timeout;
+    
+    // Show confirmation
+    const statusDiv = document.getElementById('voiceStatus');
+    if (statusDiv) {
+        const fieldNames = {
+            'patientName': 'Patient Name',
+            'patientAge': 'Age',
+            'symptoms': 'Symptoms',
+            'medicalHistory': 'Medical History',
+            'dictation': 'Dictation'
+        };
+        statusDiv.innerHTML = `
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-check-circle text-green-500"></i>
+                <span class="text-sm font-semibold text-green-700">${fieldNames[fieldId]} timeout updated to ${timeout/1000}s!</span>
+            </div>
+        `;
+        statusDiv.classList.remove('hidden');
+        
+        setTimeout(() => {
+            statusDiv.classList.add('hidden');
+        }, 3000);
+    }
+}
+
 // Update voice configuration (can be called from settings)
 function updateVoiceConfig(newConfig) {
     Object.assign(VOICE_CONFIG, newConfig);
@@ -259,7 +308,7 @@ function updateVoiceConfig(newConfig) {
         statusDiv.innerHTML = `
             <div class="flex items-center space-x-2">
                 <i class="fas fa-check-circle text-green-500"></i>
-                <span class="text-sm font-semibold text-green-700">Voice settings updated! Auto-stop: ${VOICE_CONFIG.silenceTimeout/1000}s</span>
+                <span class="text-sm font-semibold text-green-700">Voice settings updated!</span>
             </div>
         `;
         statusDiv.classList.remove('hidden');
@@ -272,7 +321,15 @@ function updateVoiceConfig(newConfig) {
 
 // Get current voice configuration
 function getVoiceConfig() {
-    return { ...VOICE_CONFIG };
+    return { 
+        ...VOICE_CONFIG,
+        fieldTimeouts: { ...FIELD_TIMEOUTS }
+    };
+}
+
+// Get timeout for a specific field
+function getFieldTimeoutValue(fieldId) {
+    return getFieldTimeout(fieldId);
 }
 
 // Initialize on page load
