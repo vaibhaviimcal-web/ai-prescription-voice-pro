@@ -1,0 +1,179 @@
+{
+  "interactions": [
+    {
+      "drug1": "paracetamol",
+      "drug2": "warfarin",
+      "severity": "moderate",
+      "description": "Paracetamol may increase the anticoagulant effect of warfarin, increasing bleeding risk.",
+      "recommendation": "Monitor INR levels closely. Consider alternative pain relief."
+    },
+    {
+      "drug1": "aspirin",
+      "drug2": "ibuprofen",
+      "severity": "high",
+      "description": "Both are NSAIDs. Combined use increases risk of gastrointestinal bleeding and ulcers.",
+      "recommendation": "Avoid concurrent use. Use only one NSAID at a time."
+    },
+    {
+      "drug1": "aspirin",
+      "drug2": "warfarin",
+      "severity": "high",
+      "description": "Increased risk of bleeding due to combined antiplatelet and anticoagulant effects.",
+      "recommendation": "Use with extreme caution. Monitor for bleeding signs."
+    },
+    {
+      "drug1": "metformin",
+      "drug2": "alcohol",
+      "severity": "high",
+      "description": "Alcohol increases risk of lactic acidosis with metformin.",
+      "recommendation": "Advise patient to avoid alcohol consumption."
+    },
+    {
+      "drug1": "ciprofloxacin",
+      "drug2": "antacid",
+      "severity": "moderate",
+      "description": "Antacids reduce absorption of ciprofloxacin, decreasing effectiveness.",
+      "recommendation": "Take ciprofloxacin 2 hours before or 6 hours after antacids."
+    },
+    {
+      "drug1": "atorvastatin",
+      "drug2": "clarithromycin",
+      "severity": "high",
+      "description": "Clarithromycin increases atorvastatin levels, raising risk of muscle damage (rhabdomyolysis).",
+      "recommendation": "Consider alternative antibiotic or statin dose reduction."
+    },
+    {
+      "drug1": "amlodipine",
+      "drug2": "simvastatin",
+      "severity": "moderate",
+      "description": "Amlodipine increases simvastatin levels, increasing risk of muscle toxicity.",
+      "recommendation": "Limit simvastatin dose to 20mg daily when used with amlodipine."
+    },
+    {
+      "drug1": "digoxin",
+      "drug2": "amiodarone",
+      "severity": "high",
+      "description": "Amiodarone increases digoxin levels, risk of digoxin toxicity.",
+      "recommendation": "Reduce digoxin dose by 50% and monitor levels closely."
+    },
+    {
+      "drug1": "levothyroxine",
+      "drug2": "calcium",
+      "severity": "moderate",
+      "description": "Calcium reduces absorption of levothyroxine.",
+      "recommendation": "Separate administration by at least 4 hours."
+    },
+    {
+      "drug1": "omeprazole",
+      "drug2": "clopidogrel",
+      "severity": "moderate",
+      "description": "Omeprazole may reduce effectiveness of clopidogrel.",
+      "recommendation": "Consider alternative PPI like pantoprazole."
+    },
+    {
+      "drug1": "azithromycin",
+      "drug2": "amiodarone",
+      "severity": "high",
+      "description": "Both prolong QT interval, risk of fatal arrhythmias.",
+      "recommendation": "Avoid combination. Use alternative antibiotic."
+    },
+    {
+      "drug1": "tramadol",
+      "drug2": "ssri",
+      "severity": "high",
+      "description": "Increased risk of serotonin syndrome (confusion, agitation, rapid heart rate).",
+      "recommendation": "Monitor closely for serotonin syndrome symptoms."
+    },
+    {
+      "drug1": "metronidazole",
+      "drug2": "alcohol",
+      "severity": "high",
+      "description": "Disulfiram-like reaction: severe nausea, vomiting, flushing, headache.",
+      "recommendation": "Avoid alcohol during treatment and for 48 hours after."
+    },
+    {
+      "drug1": "phenytoin",
+      "drug2": "fluconazole",
+      "severity": "high",
+      "description": "Fluconazole increases phenytoin levels, risk of toxicity.",
+      "recommendation": "Monitor phenytoin levels and adjust dose accordingly."
+    },
+    {
+      "drug1": "insulin",
+      "drug2": "beta-blocker",
+      "severity": "moderate",
+      "description": "Beta-blockers may mask hypoglycemia symptoms.",
+      "recommendation": "Monitor blood glucose more frequently."
+    },
+    {
+      "drug1": "lisinopril",
+      "drug2": "potassium",
+      "severity": "moderate",
+      "description": "ACE inhibitors increase potassium levels, risk of hyperkalemia.",
+      "recommendation": "Monitor potassium levels regularly."
+    },
+    {
+      "drug1": "diclofenac",
+      "drug2": "aspirin",
+      "severity": "high",
+      "description": "Increased risk of GI bleeding and cardiovascular events.",
+      "recommendation": "Avoid combination. Use single NSAID."
+    },
+    {
+      "drug1": "cetirizine",
+      "drug2": "alcohol",
+      "severity": "moderate",
+      "description": "Increased drowsiness and impaired coordination.",
+      "recommendation": "Avoid alcohol during treatment."
+    },
+    {
+      "drug1": "prednisone",
+      "drug2": "nsaid",
+      "severity": "high",
+      "description": "Increased risk of gastrointestinal ulceration and bleeding.",
+      "recommendation": "Use gastroprotective agent if combination necessary."
+    },
+    {
+      "drug1": "amoxicillin",
+      "drug2": "methotrexate",
+      "severity": "moderate",
+      "description": "Amoxicillin may increase methotrexate toxicity.",
+      "recommendation": "Monitor for methotrexate side effects."
+    }
+  ],
+  "drugAliases": {
+    "paracetamol": ["acetaminophen", "crocin", "dolo", "calpol", "tylenol"],
+    "ibuprofen": ["brufen", "advil", "motrin", "nurofen"],
+    "aspirin": ["disprin", "ecosprin", "acetylsalicylic acid"],
+    "metformin": ["glucophage", "glycomet", "obimet"],
+    "ciprofloxacin": ["cipro", "ciplox"],
+    "atorvastatin": ["lipitor", "atorva", "storvas"],
+    "amlodipine": ["norvasc", "amlong"],
+    "omeprazole": ["prilosec", "omez", "omepral"],
+    "azithromycin": ["zithromax", "azithral", "azee"],
+    "cetirizine": ["zyrtec", "alerid", "cetrizet"],
+    "diclofenac": ["voltaren", "voveran"],
+    "amoxicillin": ["amoxil", "mox", "novamox"],
+    "tramadol": ["ultram", "tramazac"],
+    "metronidazole": ["flagyl", "metrogyl"],
+    "prednisone": ["deltasone", "wysolone"],
+    "levothyroxine": ["synthroid", "eltroxin"],
+    "digoxin": ["lanoxin"],
+    "lisinopril": ["prinivil", "zestril"],
+    "simvastatin": ["zocor"],
+    "clarithromycin": ["biaxin", "clariwin"],
+    "amiodarone": ["cordarone"],
+    "clopidogrel": ["plavix", "clopivas"],
+    "phenytoin": ["dilantin"],
+    "fluconazole": ["diflucan"],
+    "warfarin": ["coumadin"],
+    "calcium": ["calcium carbonate", "calcium supplement"],
+    "antacid": ["gelusil", "digene", "eno"],
+    "alcohol": ["ethanol"],
+    "ssri": ["fluoxetine", "sertraline", "escitalopram", "prozac", "zoloft"],
+    "beta-blocker": ["metoprolol", "atenolol", "propranolol"],
+    "potassium": ["potassium chloride", "potassium supplement"],
+    "nsaid": ["ibuprofen", "diclofenac", "naproxen", "aspirin"],
+    "insulin": ["insulin glargine", "insulin aspart", "lantus", "novorapid"]
+  }
+}
