@@ -4,9 +4,12 @@
 // This module checks for dangerous drug interactions
 // and displays warnings to the doctor before saving prescription
 
+console.log('🔄 Loading Drug Interaction Checker...');
+
 class DrugInteractionChecker {
     constructor() {
         this.interactionData = null;
+        this.isLoaded = false;
         this.loadInteractionDatabase();
     }
 
@@ -14,10 +17,13 @@ class DrugInteractionChecker {
         try {
             const response = await fetch('drug-interactions.json');
             this.interactionData = await response.json();
+            this.isLoaded = true;
             console.log('✅ Drug interaction database loaded successfully');
+            console.log(`📊 Loaded ${this.interactionData.interactions.length} interactions`);
         } catch (error) {
             console.error('❌ Failed to load drug interaction database:', error);
             this.interactionData = { interactions: [], drugAliases: {} };
+            this.isLoaded = false;
         }
     }
 
@@ -29,35 +35,44 @@ class DrugInteractionChecker {
         let normalized = drugName.toLowerCase()
             .replace(/\d+\s*(mg|ml|mcg|g|%|iu|units?)/gi, '')
             .replace(/tab\.|cap\.|syrup|injection|cream|ointment/gi, '')
+            .replace(/tablet|capsule|syrup|injection|cream|ointment/gi, '')
             .trim();
         
         // Remove common prefixes
-        normalized = normalized.replace(/^(tab|cap|syrup|inj)\.\s*/i, '');
+        normalized = normalized.replace(/^(tab|cap|syrup|inj)\\.?\\s*/i, '');
         
         return normalized;
     }
 
     // Find base drug name using aliases
     findBaseDrug(drugName) {
+        if (!this.isLoaded || !this.interactionData) return null;
+        
         const normalized = this.normalizeDrugName(drugName);
+        console.log(`🔍 Normalized "${drugName}" to "${normalized}"`);
         
         // Check if it's already a base drug
         if (this.interactionData.drugAliases[normalized]) {
+            console.log(`✅ Found as base drug: ${normalized}`);
             return normalized;
         }
         
         // Search in aliases
         for (const [baseDrug, aliases] of Object.entries(this.interactionData.drugAliases)) {
             if (aliases.some(alias => normalized.includes(alias) || alias.includes(normalized))) {
+                console.log(`✅ Matched "${normalized}" to base drug: ${baseDrug}`);
                 return baseDrug;
             }
         }
         
-        return normalized;
+        console.log(`⚠️ No match found for: ${normalized}`);
+        return normalized; // Return normalized name even if not in database
     }
 
     // Check interactions between two drugs
     checkInteraction(drug1, drug2) {
+        if (!this.isLoaded) return null;
+        
         const base1 = this.findBaseDrug(drug1);
         const base2 = this.findBaseDrug(drug2);
         
@@ -69,13 +84,21 @@ class DrugInteractionChecker {
             (i.drug1 === base2 && i.drug2 === base1)
         );
         
+        if (interaction) {
+            console.log(`⚠️ INTERACTION FOUND: ${base1} + ${base2} (${interaction.severity})`);
+        }
+        
         return interaction;
     }
 
     // Check all medicines in prescription for interactions
     checkPrescription(medicines) {
-        if (!medicines || medicines.length < 2) return [];
+        if (!this.isLoaded || !medicines || medicines.length < 2) {
+            console.log('⏭️ Skipping interaction check (not loaded or < 2 medicines)');
+            return [];
+        }
         
+        console.log(`🔍 Checking ${medicines.length} medicines for interactions...`);
         const interactions = [];
         
         for (let i = 0; i < medicines.length; i++) {
@@ -95,6 +118,7 @@ class DrugInteractionChecker {
             }
         }
         
+        console.log(`📊 Found ${interactions.length} interactions`);
         return interactions;
     }
 
@@ -198,12 +222,12 @@ class DrugInteractionChecker {
                     
                     <div class="mt-6 flex gap-4">
                         <button 
-                            onclick="document.getElementById('interactionModal').remove(); (${onCancel.toString()})()"
+                            id="cancelInteractionBtn"
                             class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition">
                             <i class="fas fa-times mr-2"></i>Cancel & Modify
                         </button>
                         <button 
-                            onclick="document.getElementById('interactionModal').remove(); (${onProceed.toString()})()"
+                            id="proceedInteractionBtn"
                             class="flex-1 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition">
                             <i class="fas fa-check mr-2"></i>Proceed Anyway
                         </button>
@@ -218,61 +242,114 @@ class DrugInteractionChecker {
         `;
         
         document.body.appendChild(modal);
+        
+        // Add event listeners
+        document.getElementById('cancelInteractionBtn').addEventListener('click', () => {
+            modal.remove();
+            onCancel();
+        });
+        
+        document.getElementById('proceedInteractionBtn').addEventListener('click', () => {
+            modal.remove();
+            onProceed();
+        });
     }
 }
 
 // Initialize the drug interaction checker
 const drugInteractionChecker = new DrugInteractionChecker();
 
-// Override the original savePrescription function to add interaction checking
-const originalSavePrescription = window.savePrescription;
-window.savePrescription = function() {
-    if (!currentPrescription) return;
-    
-    // Check for drug interactions
-    const interactions = drugInteractionChecker.checkPrescription(currentPrescription.medicines);
-    
-    if (interactions.length > 0) {
-        // Show warning modal
-        drugInteractionChecker.showInteractionModal(
-            interactions,
-            function() {
-                // User chose to proceed anyway
-                originalSavePrescription();
-            },
-            function() {
-                // User chose to cancel and modify
-                console.log('Prescription save cancelled due to drug interactions');
-            }
-        );
-    } else {
-        // No interactions, proceed normally
-        originalSavePrescription();
-    }
-};
-
-// Add interaction warnings to prescription display
-const originalDisplayPrescription = window.displayPrescription;
-window.displayPrescription = function(data) {
-    // Call original function first
-    originalDisplayPrescription(data);
-    
-    // Check for interactions
-    const interactions = drugInteractionChecker.checkPrescription(data.medicines);
-    
-    if (interactions.length > 0) {
-        // Add warnings to the preview
-        const preview = document.getElementById('preview');
-        const warningsHTML = drugInteractionChecker.displayWarnings(interactions);
+// Wait for database to load, then hook into the system
+setTimeout(() => {
+    if (typeof window.displayPrescription === 'function') {
+        console.log('✅ Found displayPrescription function, hooking in...');
         
-        // Insert warnings before the footer
-        const footer = preview.querySelector('.border-t');
-        if (footer) {
-            footer.insertAdjacentHTML('beforebegin', warningsHTML);
-        } else {
-            preview.querySelector('.space-y-6').insertAdjacentHTML('beforeend', warningsHTML);
-        }
+        // Store original function
+        const originalDisplayPrescription = window.displayPrescription;
+        
+        // Override with interaction checking
+        window.displayPrescription = function(data) {
+            console.log('🔍 displayPrescription called, checking for interactions...');
+            
+            // Call original function first
+            const result = originalDisplayPrescription(data);
+            
+            // Check for interactions
+            if (drugInteractionChecker.isLoaded && data.medicines) {
+                const interactions = drugInteractionChecker.checkPrescription(data.medicines);
+                
+                if (interactions.length > 0) {
+                    console.log(`⚠️ ${interactions.length} interactions found, adding warnings to UI`);
+                    
+                    // Add warnings to the preview
+                    const preview = document.getElementById('preview');
+                    if (preview) {
+                        const warningsHTML = drugInteractionChecker.displayWarnings(interactions);
+                        
+                        // Find the footer and insert warnings before it
+                        const footer = preview.querySelector('.border-t.pt-4.mt-6');
+                        if (footer) {
+                            footer.insertAdjacentHTML('beforebegin', warningsHTML);
+                        } else {
+                            // If no footer found, append to preview
+                            preview.insertAdjacentHTML('beforeend', warningsHTML);
+                        }
+                    }
+                }
+            }
+            
+            return result;
+        };
+        
+        console.log('✅ displayPrescription hooked successfully');
     }
-};
+    
+    if (typeof window.savePrescription === 'function') {
+        console.log('✅ Found savePrescription function, hooking in...');
+        
+        // Store original function
+        const originalSavePrescription = window.savePrescription;
+        
+        // Override with interaction checking
+        window.savePrescription = function() {
+            console.log('💾 savePrescription called, checking for interactions...');
+            
+            if (!window.currentPrescription) {
+                console.log('⚠️ No current prescription');
+                return;
+            }
+            
+            // Check for drug interactions
+            if (drugInteractionChecker.isLoaded && window.currentPrescription.medicines) {
+                const interactions = drugInteractionChecker.checkPrescription(window.currentPrescription.medicines);
+                
+                if (interactions.length > 0) {
+                    console.log(`🚨 ${interactions.length} interactions found, showing modal...`);
+                    
+                    // Show warning modal
+                    drugInteractionChecker.showInteractionModal(
+                        interactions,
+                        function() {
+                            // User chose to proceed anyway
+                            console.log('✅ User chose to proceed despite interactions');
+                            originalSavePrescription();
+                        },
+                        function() {
+                            // User chose to cancel and modify
+                            console.log('❌ User cancelled save due to interactions');
+                        }
+                    );
+                    return; // Don't save yet
+                }
+            }
+            
+            // No interactions, proceed normally
+            console.log('✅ No interactions found, saving normally');
+            originalSavePrescription();
+        };
+        
+        console.log('✅ savePrescription hooked successfully');
+    }
+}, 1000); // Wait 1 second for everything to load
 
-console.log('✅ Drug Interaction Checker loaded successfully');
+console.log('✅ Drug Interaction Checker module loaded');
