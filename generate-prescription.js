@@ -1,17 +1,19 @@
 // Core prescription generation function using Groq AI
-async function generatePrescription(event) {
-    event.preventDefault();
-    
-    const apiKey = localStorage.getItem('groq_api_key');
+async function generatePrescription() {
+    // Get API key - matches critical-errors-fix.js naming
+    const apiKey = localStorage.getItem('groqApiKey');
     if (!apiKey) {
         alert('⚠️ Please configure your Groq API key in Settings first!');
-        showSettings();
+        if (typeof showSettings === 'function') {
+            showSettings();
+        }
         return;
     }
     
+    // Get form values - matches HTML element IDs
     const patientName = document.getElementById('patientName').value;
     const patientAge = document.getElementById('patientAge').value;
-    const gender = document.getElementById('gender').value;
+    const gender = document.getElementById('patientGender').value; // Fixed: was 'gender'
     const symptoms = document.getElementById('symptoms').value;
     
     if (!patientName || !patientAge || !symptoms) {
@@ -20,10 +22,15 @@ async function generatePrescription(event) {
     }
     
     // Show loading state
-    const submitBtn = event.target.querySelector('button[type="submit"]');
-    const originalBtnText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Generating...';
-    submitBtn.disabled = true;
+    const generateBtn = document.querySelector('button[onclick="generatePrescription()"]');
+    if (generateBtn) {
+        const originalBtnText = generateBtn.innerHTML;
+        generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Generating...';
+        generateBtn.disabled = true;
+        
+        // Store original text for restoration
+        generateBtn.dataset.originalText = originalBtnText;
+    }
     
     try {
         // Prepare AI prompt
@@ -79,7 +86,8 @@ Format the response as JSON with this structure:
         });
         
         if (!response.ok) {
-            throw new Error(`API Error: ${response.status} ${response.statusText}`);
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(`API Error: ${response.status} ${response.statusText}. ${errorData.error?.message || ''}`);
         }
         
         const data = await response.json();
@@ -97,6 +105,7 @@ Format the response as JSON with this structure:
             }
         } catch (parseError) {
             console.error('JSON Parse Error:', parseError);
+            console.error('AI Response:', aiResponse);
             throw new Error('Failed to parse AI response. Please try again.');
         }
         
@@ -108,7 +117,8 @@ Format the response as JSON with this structure:
             symptoms,
             diagnosis: prescriptionData.diagnosis,
             medicines: prescriptionData.medicines || [],
-            advice: prescriptionData.advice || []
+            advice: prescriptionData.advice || [],
+            date: new Date().toISOString()
         };
         
         // Display prescription
@@ -116,41 +126,75 @@ Format the response as JSON with this structure:
         
         // Increment voice command counter (if used voice)
         if (window.voiceUsedInForm) {
-            db.incrementVoiceCommands();
+            if (typeof window.db !== 'undefined' && window.db.incrementVoiceCommands) {
+                window.db.incrementVoiceCommands();
+            }
             window.voiceUsedInForm = false;
         }
+        
+        console.log('✅ Prescription generated successfully');
         
     } catch (error) {
         console.error('Generation Error:', error);
         alert(`❌ Error generating prescription: ${error.message}`);
     } finally {
         // Restore button
-        submitBtn.innerHTML = originalBtnText;
-        submitBtn.disabled = false;
+        if (generateBtn) {
+            generateBtn.innerHTML = generateBtn.dataset.originalText || '<i class="fas fa-magic mr-2"></i>Generate AI Prescription';
+            generateBtn.disabled = false;
+        }
     }
 }
 
 // Display prescription in preview area
 function displayPrescription(prescription) {
-    const branding = db.getClinicBranding();
+    // Get branding from localStorage or use defaults
+    let branding = {
+        clinicName: 'MediScript AI',
+        tagline: 'Enterprise Medical Platform',
+        doctorName: '',
+        credentials: '',
+        regNumber: '',
+        phone: '',
+        email: '',
+        address: ''
+    };
+    
+    try {
+        const savedBranding = localStorage.getItem('clinicBranding');
+        if (savedBranding) {
+            branding = { ...branding, ...JSON.parse(savedBranding) };
+        }
+    } catch (error) {
+        console.warn('Could not load branding:', error);
+    }
+    
     const date = new Date().toLocaleDateString('en-IN');
     
     let medicinesHTML = '';
-    prescription.medicines.forEach((med, index) => {
-        medicinesHTML += `
-            <tr class="border-b border-gray-200">
-                <td class="py-2 px-3 text-sm">${index + 1}</td>
-                <td class="py-2 px-3 text-sm font-semibold">${med.name}</td>
-                <td class="py-2 px-3 text-sm">${med.dosage}</td>
-                <td class="py-2 px-3 text-sm">${med.duration || 'As needed'}</td>
-            </tr>
-        `;
-    });
+    if (prescription.medicines && prescription.medicines.length > 0) {
+        prescription.medicines.forEach((med, index) => {
+            medicinesHTML += `
+                <tr class="border-b border-gray-200">
+                    <td class="py-2 px-3 text-sm">${index + 1}</td>
+                    <td class="py-2 px-3 text-sm font-semibold">${med.name}</td>
+                    <td class="py-2 px-3 text-sm">${med.dosage}</td>
+                    <td class="py-2 px-3 text-sm">${med.duration || 'As needed'}</td>
+                </tr>
+            `;
+        });
+    } else {
+        medicinesHTML = '<tr><td colspan="4" class="py-2 px-3 text-sm text-center text-gray-500">No medicines prescribed</td></tr>';
+    }
     
     let adviceHTML = '';
-    prescription.advice.forEach(advice => {
-        adviceHTML += `<li class="text-sm text-gray-700">${advice}</li>`;
-    });
+    if (prescription.advice && prescription.advice.length > 0) {
+        prescription.advice.forEach(advice => {
+            adviceHTML += `<li class="text-sm text-gray-700">${advice}</li>`;
+        });
+    } else {
+        adviceHTML = '<li class="text-sm text-gray-500">No specific advice provided</li>';
+    }
     
     const html = `
         <div class="bg-white rounded-lg p-6 border border-gray-200">
@@ -158,8 +202,8 @@ function displayPrescription(prescription) {
             <div class="border-b-2 border-blue-600 pb-4 mb-4">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h3 class="text-2xl font-bold text-gray-900">${branding.clinicName || 'MediScript AI'}</h3>
-                        <p class="text-sm text-gray-600">${branding.tagline || 'Enterprise Medical Platform'}</p>
+                        <h3 class="text-2xl font-bold text-gray-900">${branding.clinicName}</h3>
+                        <p class="text-sm text-gray-600">${branding.tagline}</p>
                     </div>
                     <div class="text-right text-sm text-gray-600">
                         <p><strong>Date:</strong> ${date}</p>
@@ -225,13 +269,25 @@ function displayPrescription(prescription) {
         </div>
     `;
     
-    document.getElementById('preview').innerHTML = html;
-    document.getElementById('statusBadge').classList.remove('hidden');
-    document.getElementById('actionButtons').classList.remove('hidden');
+    // Fixed: Use correct element ID from HTML
+    const previewElement = document.getElementById('prescriptionPreview');
+    if (previewElement) {
+        previewElement.innerHTML = html;
+    } else {
+        console.error('prescriptionPreview element not found');
+    }
+    
+    // Show action buttons - Fixed: Use correct element ID from HTML
+    const actionsElement = document.getElementById('prescriptionActions');
+    if (actionsElement) {
+        actionsElement.classList.remove('hidden');
+    }
+    
+    console.log('✅ Prescription displayed');
 }
 
-// Make function globally available
+// Make functions globally available
 window.generatePrescription = generatePrescription;
 window.displayPrescription = displayPrescription;
 
-console.log('✅ generatePrescription function loaded');
+console.log('✅ generate-prescription.js loaded (FIXED VERSION)');
