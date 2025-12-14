@@ -1,22 +1,46 @@
 // INLINE VOICE RECOGNITION SYSTEM
-// Each input field gets its own voice button
+// Each input field gets its own voice button with configurable auto-stop
 
 let currentFieldRecognition = null;
 let currentActiveField = null;
+let silenceTimer = null;
+let lastTranscriptTime = null;
+
+// CONFIGURABLE SETTINGS
+const VOICE_CONFIG = {
+    // Auto-stop after X seconds of silence (user configurable)
+    silenceTimeout: 2000, // 2 seconds default (can be changed: 1000 = 1s, 3000 = 3s, etc.)
+    
+    // Maximum recording time (safety limit)
+    maxRecordingTime: 30000, // 30 seconds max
+    
+    // Language
+    language: 'en-US',
+    
+    // Audio feedback
+    enableBeep: true,
+    beepFrequency: 800,
+    beepDuration: 0.1
+};
 
 // Initialize field-specific voice recognition
 function initFieldVoiceRecognition() {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         currentFieldRecognition = new SpeechRecognition();
-        currentFieldRecognition.continuous = false; // Stop after one result
+        currentFieldRecognition.continuous = true; // Keep listening for silence detection
         currentFieldRecognition.interimResults = true;
-        currentFieldRecognition.lang = 'en-US';
+        currentFieldRecognition.lang = VOICE_CONFIG.language;
 
         currentFieldRecognition.onresult = (event) => {
             let transcript = '';
+            let isFinal = false;
+            
             for (let i = event.resultIndex; i < event.results.length; i++) {
                 transcript += event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                    isFinal = true;
+                }
             }
             
             // Update the active field with transcript
@@ -35,16 +59,70 @@ function initFieldVoiceRecognition() {
                     }
                 }
             }
+            
+            // Reset silence timer on new speech
+            lastTranscriptTime = Date.now();
+            resetSilenceTimer();
+            
+            // If final result, start silence countdown
+            if (isFinal) {
+                startSilenceCountdown();
+            }
         };
 
         currentFieldRecognition.onend = () => {
-            stopFieldVoice();
+            // Only stop if we're not in the middle of recording
+            if (currentActiveField) {
+                stopFieldVoice();
+            }
         };
 
         currentFieldRecognition.onerror = (event) => {
             console.error('Speech recognition error:', event.error);
             stopFieldVoice();
         };
+    }
+}
+
+// Start silence countdown timer
+function startSilenceCountdown() {
+    resetSilenceTimer();
+    
+    silenceTimer = setTimeout(() => {
+        // Check if enough time has passed since last speech
+        const timeSinceLastSpeech = Date.now() - (lastTranscriptTime || Date.now());
+        
+        if (timeSinceLastSpeech >= VOICE_CONFIG.silenceTimeout) {
+            // Auto-stop due to silence
+            stopFieldVoice();
+            showAutoStopNotification();
+        }
+    }, VOICE_CONFIG.silenceTimeout);
+}
+
+// Reset silence timer
+function resetSilenceTimer() {
+    if (silenceTimer) {
+        clearTimeout(silenceTimer);
+        silenceTimer = null;
+    }
+}
+
+// Show notification that auto-stop occurred
+function showAutoStopNotification() {
+    const statusDiv = document.getElementById('voiceStatus');
+    if (statusDiv) {
+        statusDiv.innerHTML = `
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-check-circle text-green-500"></i>
+                <span class="text-sm font-semibold text-green-700">Voice input completed (auto-stopped after ${VOICE_CONFIG.silenceTimeout/1000}s silence)</span>
+            </div>
+        `;
+        
+        // Hide after 2 seconds
+        setTimeout(() => {
+            statusDiv.classList.add('hidden');
+        }, 2000);
     }
 }
 
@@ -68,6 +146,7 @@ function startFieldVoice(fieldId) {
 
     try {
         currentActiveField = fieldId;
+        lastTranscriptTime = Date.now();
         currentFieldRecognition.start();
         
         // Update UI
@@ -86,6 +165,13 @@ function startFieldVoice(fieldId) {
                 'symptoms': 'Symptoms'
             };
             fieldNameSpan.textContent = `(${fieldNames[fieldId] || fieldId})`;
+            statusDiv.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <div class="w-2 h-2 bg-red-500 rounded-full pulse-animation"></div>
+                    <span class="text-sm font-semibold text-red-700">Listening... <span id="voiceFieldName">${fieldNameSpan.textContent}</span></span>
+                </div>
+                <p class="text-xs text-red-600 mt-1">Speak clearly. Auto-stops after ${VOICE_CONFIG.silenceTimeout/1000}s silence or click mic to stop.</p>
+            `;
             statusDiv.classList.remove('hidden');
         }
 
@@ -95,7 +181,18 @@ function startFieldVoice(fieldId) {
         }
 
         // Audio feedback
-        playBeep();
+        if (VOICE_CONFIG.enableBeep) {
+            playBeep();
+        }
+        
+        // Safety timeout - force stop after max recording time
+        setTimeout(() => {
+            if (currentActiveField === fieldId) {
+                stopFieldVoice();
+                alert(`Recording stopped: Maximum time limit (${VOICE_CONFIG.maxRecordingTime/1000}s) reached`);
+            }
+        }, VOICE_CONFIG.maxRecordingTime);
+        
     } catch (error) {
         console.error('Failed to start voice recognition:', error);
         stopFieldVoice();
@@ -104,6 +201,8 @@ function startFieldVoice(fieldId) {
 
 // Stop voice input
 function stopFieldVoice() {
+    resetSilenceTimer();
+    
     if (currentFieldRecognition) {
         try {
             currentFieldRecognition.stop();
@@ -124,25 +223,56 @@ function stopFieldVoice() {
     }
 
     currentActiveField = null;
+    lastTranscriptTime = null;
 }
 
 // Play a beep sound for audio feedback
 function playBeep() {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = VOICE_CONFIG.beepFrequency;
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + VOICE_CONFIG.beepDuration);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + VOICE_CONFIG.beepDuration);
+    } catch (e) {
+        console.log('Audio feedback not available');
+    }
+}
+
+// Update voice configuration (can be called from settings)
+function updateVoiceConfig(newConfig) {
+    Object.assign(VOICE_CONFIG, newConfig);
     
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    oscillator.frequency.value = 800;
-    oscillator.type = 'sine';
-    
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-    
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.1);
+    // Show confirmation
+    const statusDiv = document.getElementById('voiceStatus');
+    if (statusDiv) {
+        statusDiv.innerHTML = `
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-check-circle text-green-500"></i>
+                <span class="text-sm font-semibold text-green-700">Voice settings updated! Auto-stop: ${VOICE_CONFIG.silenceTimeout/1000}s</span>
+            </div>
+        `;
+        statusDiv.classList.remove('hidden');
+        
+        setTimeout(() => {
+            statusDiv.classList.add('hidden');
+        }, 3000);
+    }
+}
+
+// Get current voice configuration
+function getVoiceConfig() {
+    return { ...VOICE_CONFIG };
 }
 
 // Initialize on page load
