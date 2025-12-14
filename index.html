@@ -50,9 +50,9 @@
         }
         
         .input-field:focus {
+            outline: none;
             border-color: #0066cc;
             box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
-            outline: none;
         }
         
         .stat-card {
@@ -60,55 +60,21 @@
         }
         
         .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px -5px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
         }
-        
-        .pulse-animation {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        .slide-in {
-            animation: slideIn 0.5s ease-out;
-        }
-        
+
         @keyframes slideIn {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateX(100%);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateX(0);
             }
         }
-        
-        .medical-gradient {
-            background: linear-gradient(135deg, #0066cc 0%, #00a8e8 100%);
-        }
-        
-        .logo-preview {
-            max-width: 200px;
-            max-height: 80px;
-            object-fit: contain;
-        }
-        
-        .logo-upload-area {
-            border: 2px dashed #cbd5e1;
-            transition: all 0.3s ease;
-        }
-        
-        .logo-upload-area:hover {
-            border-color: #0066cc;
-            background: rgba(0, 102, 204, 0.05);
-        }
 
-        /* Voice Button Styles */
         .voice-input-wrapper {
             position: relative;
         }
@@ -120,30 +86,21 @@
             transform: translateY(-50%);
             background: white;
             border: 2px solid #e5e7eb;
-            width: 36px;
-            height: 36px;
             border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 8px 12px;
             cursor: pointer;
             transition: all 0.3s ease;
-            z-index: 10;
         }
 
         .voice-btn:hover {
+            background: #f3f4f6;
             border-color: #0066cc;
-            background: #eff6ff;
         }
 
         .voice-btn.listening {
-            background: #ef4444;
+            background: #fee2e2;
             border-color: #ef4444;
             animation: pulse 1.5s infinite;
-        }
-
-        .voice-btn.listening i {
-            color: white !important;
         }
 
         .voice-btn-textarea {
@@ -152,48 +109,27 @@
         }
 
         .input-with-voice {
-            padding-right: 56px !important;
+            padding-right: 60px;
         }
 
-        /* Template Cards */
-        .line-clamp-2 {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
-    
-    <!-- Setup Banner -->
-    <div id="setupBanner" class="bg-yellow-50 border-b border-yellow-200 py-3" style="display: none;">
-        <div class="container mx-auto px-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-exclamation-triangle text-yellow-600 text-2xl"></i>
-                    <div>
-                        <p class="text-sm text-yellow-800 font-semibold"><strong>Setup Required:</strong> Get FREE Groq API key (no credit card)</p>
-                        <a href="https://console.groq.com/keys" target="_blank" class="underline font-semibold text-yellow-900 hover:text-yellow-700">https://console.groq.com/keys</a>
-                    </div>
-                </div>
-                <button onclick="showSettings()" class="bg-yellow-600 text-white px-4 py-1 rounded text-sm hover:bg-yellow-700">
-                    Setup Now
-                </button>
-            </div>
-        </div>
-    </div>
-
+<body>
     <!-- Header -->
-    <header class="glass-effect shadow-lg border-b sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div id="clinicLogoContainer" class="hidden">
-                        <img id="clinicLogo" src="" alt="Clinic Logo" class="logo-preview">
-                    </div>
-                    <div id="defaultLogo" class="bg-gradient-to-br from-blue-600 to-blue-400 w-12 h-12 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-stethoscope text-white text-2xl"></i>
+    <header class="glass-effect border-b border-gray-200 sticky top-0 z-40">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between py-4">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-gradient-to-br from-blue-600 to-blue-800 w-12 h-12 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-stethoscope text-white text-xl"></i>
                     </div>
                     <div>
                         <h1 id="clinicName" class="text-2xl font-bold text-gray-900">MediScript AI</h1>
@@ -249,7 +185,7 @@
                         <p class="text-3xl font-bold text-gray-900" id="voiceCommands">0</p>
                     </div>
                     <div class="bg-purple-100 w-12 h-12 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-microphone-alt text-purple-600 text-xl"></i>
+                        <i class="fas fa-microphone text-purple-600 text-xl"></i>
                     </div>
                 </div>
             </div>
@@ -257,42 +193,40 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-xs font-semibold text-gray-500 uppercase mb-1">AI Model</p>
-                        <p class="text-lg font-bold text-gray-900">Llama 3.3 70B</p>
-                        <p class="text-xs text-gray-500">Groq Powered</p>
+                        <p class="text-xl font-bold text-gray-900" id="aiModel">Groq Llama 3.3 70B</p>
                     </div>
                     <div class="bg-orange-100 w-12 h-12 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-robot text-orange-600 text-xl"></i>
+                        <i class="fas fa-brain text-orange-600 text-xl"></i>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Main Form and Preview -->
+        <!-- Main Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            
-            <!-- Patient Form -->
-            <div class="glass-effect rounded-2xl p-6 card-shadow border border-gray-200">
+            <!-- Input Form -->
+            <div class="glass-effect rounded-2xl p-6 card-shadow-lg border border-gray-200">
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-xl font-bold text-gray-900 flex items-center">
-                        <i class="fas fa-user-md mr-3 text-blue-600"></i>
+                    <h2 class="text-xl font-bold text-gray-900">
+                        <i class="fas fa-user-md text-blue-600 mr-2"></i>
                         Patient Information
                     </h2>
                     <div class="flex items-center space-x-3">
-                        <button id="templatesBtn" type="button" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">
+                        <button id="templatesBtn" type="button" class="text-sm text-blue-600 hover:text-blue-800 font-semibold flex items-center space-x-1">
                             <i class="fas fa-file-medical mr-1"></i>Templates
                         </button>
-                        <button onclick="clearForm()" class="text-sm text-gray-500 hover:text-gray-700 font-semibold">
+                        <button onclick="clearForm()" class="text-sm text-gray-600 hover:text-gray-800 font-semibold">
                             <i class="fas fa-redo mr-1"></i>Reset
                         </button>
                     </div>
                 </div>
                 
-                <form id="prescriptionForm" class="space-y-4">
+                <form id="prescriptionForm" onsubmit="generatePrescription(event)" class="space-y-4">
                     <!-- Patient Name with Voice -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">
                             Patient Full Name
-                            <span class="text-xs text-gray-500 ml-2">(Click 🎤 to speak)</span>
+                            <span class="text-xs text-gray-500 ml-1">(🎤 Click to speak)</span>
                         </label>
                         <div class="voice-input-wrapper">
                             <input type="text" id="patientName" required 
@@ -348,35 +282,34 @@
 
                     <!-- Voice Status Indicator -->
                     <div id="voiceStatus" class="hidden p-3 bg-red-50 border-l-4 border-red-500 rounded-lg">
-                        <div class="flex items-center space-x-2">
-                            <div class="w-2 h-2 bg-red-500 rounded-full pulse-animation"></div>
-                            <span class="text-sm font-semibold text-red-700">Listening... <span id="voiceFieldName"></span></span>
+                        <div class="flex items-center">
+                            <i class="fas fa-microphone-slash text-red-600 mr-2"></i>
+                            <p class="text-sm text-red-700 font-semibold">Listening...</p>
                         </div>
-                        <p class="text-xs text-red-600 mt-1">Speak clearly. Click microphone again to stop.</p>
                     </div>
                     
-                    <button type="submit" id="generateBtn" class="w-full btn-primary text-white py-4 rounded-xl font-bold text-lg">
-                        <i class="fas fa-wand-magic-sparkles mr-2"></i>Generate AI Prescription
+                    <button type="submit" class="w-full px-6 py-4 btn-primary text-white rounded-lg font-bold text-lg">
+                        <i class="fas fa-magic mr-2"></i>Generate AI Prescription
                     </button>
                 </form>
             </div>
 
             <!-- Prescription Preview -->
-            <div class="glass-effect rounded-2xl p-6 card-shadow border border-gray-200">
+            <div class="glass-effect rounded-2xl p-6 card-shadow-lg border border-gray-200">
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-xl font-bold text-gray-900 flex items-center">
-                        <i class="fas fa-file-prescription mr-3 text-blue-600"></i>
+                    <h2 class="text-xl font-bold text-gray-900">
+                        <i class="fas fa-file-prescription text-blue-600 mr-2"></i>
                         Prescription Preview
                     </h2>
-                    <div id="statusBadge" class="hidden px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">
+                    <div id="statusBadge" class="hidden px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold border border-green-200">
                         <i class="fas fa-check-circle mr-1"></i>Generated
                     </div>
                 </div>
                 
-                <div id="preview" class="min-h-[500px]">
-                    <div class="text-center text-gray-400 py-20">
-                        <div class="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-file-medical text-4xl text-gray-300"></i>
+                <div id="preview" class="min-h-[400px] bg-gray-50 rounded-lg p-6 border-2 border-dashed border-gray-300">
+                    <div class="flex flex-col items-center justify-center h-full text-center">
+                        <div class="bg-gray-200 w-20 h-20 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-file-medical text-gray-400 text-3xl"></i>
                         </div>
                         <p class="text-lg font-semibold text-gray-500 mb-2">No Prescription Generated</p>
                         <p class="text-sm text-gray-400">Enter patient details and generate prescription</p>
@@ -384,7 +317,7 @@
                 </div>
 
                 <!-- Action Buttons -->
-                <div id="actionButtons" class="hidden mt-6 grid grid-cols-3 gap-3">
+                <div id="actionButtons" class="hidden mt-6 grid grid-cols-4 gap-3">
                     <button onclick="savePrescription()" class="px-4 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition">
                         <i class="fas fa-save mr-2"></i>Save
                     </button>
@@ -428,65 +361,77 @@
             <div class="p-6 overflow-y-auto max-h-[60vh] space-y-6">
                 <!-- API Key Section -->
                 <div>
-                    <h4 class="font-bold text-gray-900 mb-3">Groq API Configuration</h4>
-                    <div class="bg-blue-50 p-4 rounded-lg mb-3">
-                        <p class="text-sm text-blue-800 mb-2">
-                            <i class="fas fa-info-circle mr-1"></i>
-                            Get your FREE API key from <a href="https://console.groq.com/keys" target="_blank" class="underline font-semibold">console.groq.com/keys</a>
-                        </p>
-                    </div>
-                    <input type="text" id="apiKeyInput" placeholder="gsk_..." 
-                           class="w-full px-4 py-3 rounded-lg input-field font-mono text-sm mb-3">
-                    <button onclick="saveApiKey()" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700">
+                    <h4 class="text-lg font-bold text-gray-900 mb-3">AI Configuration</h4>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Groq API Key</label>
+                    <input type="password" id="apiKeyInput" class="w-full px-4 py-3 rounded-lg input-field mb-3" 
+                           placeholder="Enter your Groq API key">
+                    <button onclick="saveApiKey()" class="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition">
                         <i class="fas fa-save mr-2"></i>Save API Key
                     </button>
+                    <p class="text-xs text-gray-500 mt-2">Get your free API key from <a href="https://console.groq.com" target="_blank" class="text-blue-600 hover:underline">console.groq.com</a></p>
                 </div>
 
                 <!-- Clinic Branding Section -->
-                <div>
-                    <h4 class="font-bold text-gray-900 mb-3">Clinic Branding</h4>
-                    
-                    <!-- Logo Upload -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Clinic Logo</label>
-                        <div class="logo-upload-area rounded-lg p-4 cursor-pointer" onclick="document.getElementById('logoInput').click()">
-                            <input type="file" id="logoInput" accept="image/*" class="hidden" onchange="handleLogoUpload(event)">
-                            <div id="logoUploadPrompt" class="text-center">
-                                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
-                                <p class="text-sm text-gray-600 font-semibold">Click to upload logo</p>
-                                <p class="text-xs text-gray-500">PNG, JPG, SVG (Max 2MB)</p>
-                            </div>
-                            <div id="logoPreviewContainer" class="hidden text-center relative">
-                                <img id="logoPreview" src="" alt="Logo Preview" class="logo-preview mx-auto">
-                                <button type="button" onclick="removeLogo(event)" class="absolute top-0 right-0 bg-red-500 text-white w-6 h-6 rounded-full text-xs">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Clinic Details -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h4 class="text-lg font-bold text-gray-900 mb-3">Clinic Branding</h4>
                     <div class="space-y-3">
-                        <input type="text" id="clinicNameInput" placeholder="Clinic Name" class="w-full px-4 py-2 rounded-lg input-field text-sm">
-                        <input type="text" id="clinicTaglineInput" placeholder="Tagline" class="w-full px-4 py-2 rounded-lg input-field text-sm">
-                        <input type="text" id="doctorNameInput" placeholder="Doctor Name" class="w-full px-4 py-2 rounded-lg input-field text-sm">
-                        <input type="text" id="doctorCredentialsInput" placeholder="Credentials (e.g., MBBS, MD)" class="w-full px-4 py-2 rounded-lg input-field text-sm">
-                        <input type="text" id="doctorRegInput" placeholder="Registration Number" class="w-full px-4 py-2 rounded-lg input-field text-sm">
-                        <input type="text" id="clinicAddressInput" placeholder="Clinic Address" class="w-full px-4 py-2 rounded-lg input-field text-sm">
-                        <input type="text" id="clinicPhoneInput" placeholder="Phone Number" class="w-full px-4 py-2 rounded-lg input-field text-sm">
-                        <input type="email" id="clinicEmailInput" placeholder="Email Address" class="w-full px-4 py-2 rounded-lg input-field text-sm">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Clinic Name</label>
+                            <input type="text" id="brandingClinicName" class="w-full px-4 py-3 rounded-lg input-field" 
+                                   placeholder="Your Clinic Name">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Tagline</label>
+                            <input type="text" id="brandingTagline" class="w-full px-4 py-3 rounded-lg input-field" 
+                                   placeholder="Your Clinic Tagline">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Doctor Name</label>
+                            <input type="text" id="brandingDoctorName" class="w-full px-4 py-3 rounded-lg input-field" 
+                                   placeholder="Dr. Your Name">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Credentials</label>
+                            <input type="text" id="brandingCredentials" class="w-full px-4 py-3 rounded-lg input-field" 
+                                   placeholder="MBBS, MD (Medicine)">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Registration Number</label>
+                            <input type="text" id="brandingRegNumber" class="w-full px-4 py-3 rounded-lg input-field" 
+                                   placeholder="MED/2024/12345">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Phone</label>
+                            <input type="text" id="brandingPhone" class="w-full px-4 py-3 rounded-lg input-field" 
+                                   placeholder="+91 98765 43210">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+                            <input type="email" id="brandingEmail" class="w-full px-4 py-3 rounded-lg input-field" 
+                                   placeholder="clinic@example.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Address</label>
+                            <textarea id="brandingAddress" rows="2" class="w-full px-4 py-3 rounded-lg input-field" 
+                                      placeholder="Clinic Address"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Logo URL (Optional)</label>
+                            <input type="url" id="brandingLogo" class="w-full px-4 py-3 rounded-lg input-field" 
+                                   placeholder="https://example.com/logo.png">
+                        </div>
+                        <button onclick="saveBranding()" class="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition">
+                            <i class="fas fa-save mr-2"></i>Save Branding
+                        </button>
                     </div>
-
-                    <button onclick="saveClinicBranding()" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 mt-4">
-                        <i class="fas fa-save mr-2"></i>Save Clinic Branding
-                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Load inline voice script FIRST -->
-    <script src="voice-inline.js"></script>
+    <!-- Load database first -->
+    <script src="database.js"></script>
+    
     <!-- Then load main app script -->
     <script src="app.js"></script>
     
@@ -500,6 +445,7 @@
     
     <!-- WEEK 2 FEATURES -->
     <script src="prescription-templates.js"></script>
+    <script src="whatsapp-share.js"></script>
     
     <!-- FEATURE 9: Multi-Language Support (Hindi, Tamil, Telugu, Bengali) -->
     <script src="multi-language.js"></script>
