@@ -383,6 +383,7 @@ function startVoice() {
         document.getElementById('voiceBtn').classList.add('bg-red-500', 'text-white', 'border-red-500');
         document.getElementById('voiceBtn').classList.remove('bg-white', 'text-gray-700', 'border-gray-300');
         document.getElementById('listeningIndicator').classList.remove('hidden');
+        // Voice feedback only for voice input activation
         speak('Voice input activated. Please speak patient details.');
     }
 }
@@ -424,6 +425,7 @@ function processVoiceCommand(transcript) {
         document.getElementById('symptoms').value = transcript;
     }
     
+    // Voice feedback only for voice input capture
     speak('Information captured.');
 }
 
@@ -472,7 +474,8 @@ document.getElementById('prescriptionForm').addEventListener('submit', async (e)
         document.getElementById('statusBadge').classList.remove('hidden');
         document.getElementById('actionButtons').classList.remove('hidden');
         
-        speak('Prescription generated successfully.');
+        // REMOVED: Automatic voice feedback for prescription generation
+        // speak('Prescription generated successfully.');
     }
     
     btn.disabled = false;
@@ -620,7 +623,8 @@ function displayPrescription(data) {
 function savePrescription() {
     if (currentPrescription) {
         db.savePrescription(currentPrescription);
-        speak('Prescription saved successfully.');
+        // REMOVED: Automatic voice feedback for save
+        // speak('Prescription saved successfully.');
         
         // Show success notification
         const notification = document.createElement('div');
@@ -643,73 +647,88 @@ function downloadPDF() {
     const regNumber = branding.regNumber || 'MED/2024/12345';
     const clinicName = branding.clinicName || 'MediScript AI';
     
+    let yPosition = 20;
+    
+    // Add Logo if available
+    if (branding.logo) {
+        try {
+            doc.addImage(branding.logo, 'PNG', 15, 10, 25, 25);
+            yPosition = 20;
+        } catch (error) {
+            console.error('Error adding logo to PDF:', error);
+        }
+    }
+    
     // Header
     doc.setFontSize(22);
     doc.setFont(undefined, 'bold');
-    doc.text('MEDICAL PRESCRIPTION', 105, 20, { align: 'center' });
+    doc.text('MEDICAL PRESCRIPTION', 105, yPosition, { align: 'center' });
     
     doc.setFontSize(10);
     doc.setFont(undefined, 'normal');
-    doc.text(clinicName, 105, 27, { align: 'center' });
+    doc.text(clinicName, 105, yPosition + 7, { align: 'center' });
     
     // Doctor Info
+    yPosition += 20;
     doc.setFontSize(14);
     doc.setFont(undefined, 'bold');
-    doc.text(doctorName, 20, 40);
+    doc.text(doctorName, 20, yPosition);
     doc.setFontSize(10);
     doc.setFont(undefined, 'normal');
-    doc.text(credentials, 20, 46);
-    doc.text(`Reg. No: ${regNumber}`, 20, 51);
+    doc.text(credentials, 20, yPosition + 6);
+    doc.text(`Reg. No: ${regNumber}`, 20, yPosition + 11);
     
     // Patient Info
+    yPosition += 23;
     doc.setFontSize(11);
     doc.setFont(undefined, 'bold');
-    doc.text('PATIENT INFORMATION', 20, 63);
+    doc.text('PATIENT INFORMATION', 20, yPosition);
     doc.setFont(undefined, 'normal');
     doc.setFontSize(10);
-    doc.text(`Name: ${currentPrescription.patientName}`, 20, 70);
-    doc.text(`Age: ${currentPrescription.age} years | Gender: ${currentPrescription.gender}`, 20, 76);
-    doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 82);
+    doc.text(`Name: ${currentPrescription.patientName}`, 20, yPosition + 7);
+    doc.text(`Age: ${currentPrescription.age} years | Gender: ${currentPrescription.gender}`, 20, yPosition + 13);
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, yPosition + 19);
     
     // Diagnosis
+    yPosition += 31;
     doc.setFont(undefined, 'bold');
-    doc.text('DIAGNOSIS:', 20, 94);
+    doc.text('DIAGNOSIS:', 20, yPosition);
     doc.setFont(undefined, 'normal');
     const diagnosisLines = doc.splitTextToSize(currentPrescription.diagnosis, 170);
-    doc.text(diagnosisLines, 20, 100);
+    doc.text(diagnosisLines, 20, yPosition + 6);
     
-    let y = 100 + (diagnosisLines.length * 6) + 8;
+    yPosition += 6 + (diagnosisLines.length * 6) + 8;
     
     // Prescription
     doc.setFont(undefined, 'bold');
-    doc.text('PRESCRIPTION (Rx):', 20, y);
-    y += 8;
+    doc.text('PRESCRIPTION (Rx):', 20, yPosition);
+    yPosition += 8;
     
     currentPrescription.medicines.forEach((med, idx) => {
         doc.setFont(undefined, 'bold');
-        doc.text(`${idx + 1}. ${med.name}`, 20, y);
-        y += 6;
+        doc.text(`${idx + 1}. ${med.name}`, 20, yPosition);
+        yPosition += 6;
         doc.setFont(undefined, 'normal');
-        doc.text(`   ${med.dosage}${med.duration ? ' for ' + med.duration : ''}`, 20, y);
-        y += 6;
+        doc.text(`   ${med.dosage}${med.duration ? ' for ' + med.duration : ''}`, 20, yPosition);
+        yPosition += 6;
         if (med.notes) {
             const noteLines = doc.splitTextToSize(`   Note: ${med.notes}`, 170);
-            doc.text(noteLines, 20, y);
-            y += noteLines.length * 6;
+            doc.text(noteLines, 20, yPosition);
+            yPosition += noteLines.length * 6;
         }
-        y += 4;
+        yPosition += 4;
     });
     
     // Advice
-    y += 4;
+    yPosition += 4;
     doc.setFont(undefined, 'bold');
-    doc.text('MEDICAL ADVICE:', 20, y);
-    y += 6;
+    doc.text('MEDICAL ADVICE:', 20, yPosition);
+    yPosition += 6;
     doc.setFont(undefined, 'normal');
     currentPrescription.advice.forEach(advice => {
         const adviceLines = doc.splitTextToSize(`• ${advice}`, 170);
-        doc.text(adviceLines, 20, y);
-        y += adviceLines.length * 6;
+        doc.text(adviceLines, 20, yPosition);
+        yPosition += adviceLines.length * 6;
     });
     
     // Footer
@@ -718,7 +737,9 @@ function downloadPDF() {
     doc.text(doctorName, 150, 280);
     
     doc.save(`prescription-${currentPrescription.patientName}-${Date.now()}.pdf`);
-    speak('PDF downloaded.');
+    
+    // REMOVED: Automatic voice feedback for PDF download
+    // speak('PDF downloaded.');
 }
 
 function speakPrescription() {
@@ -748,33 +769,42 @@ function clearForm() {
     `;
     document.getElementById('statusBadge').classList.add('hidden');
     document.getElementById('actionButtons').classList.add('hidden');
+    currentPrescription = null;
 }
 
+// Settings Modal
+function showSettings() {
+    document.getElementById('settingsModal').classList.remove('hidden');
+}
+
+function closeSettings() {
+    document.getElementById('settingsModal').classList.add('hidden');
+}
+
+// History Modal
 function showHistory() {
     const prescriptions = db.getPrescriptions();
-    const content = document.getElementById('historyContent');
+    const historyList = document.getElementById('historyList');
     
     if (prescriptions.length === 0) {
-        content.innerHTML = '<p class="text-gray-500 text-center py-12">No prescription history available.</p>';
+        historyList.innerHTML = `
+            <div class="text-center py-12 text-gray-400">
+                <i class="fas fa-folder-open text-5xl mb-4"></i>
+                <p class="text-lg">No prescriptions yet</p>
+            </div>
+        `;
     } else {
-        content.innerHTML = prescriptions.reverse().map(p => `
-            <div class="glass-effect p-5 rounded-xl border border-gray-200 hover:shadow-lg transition">
-                <div class="flex justify-between items-start mb-3">
+        historyList.innerHTML = prescriptions.reverse().map(p => `
+            <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+                <div class="flex justify-between items-start mb-2">
                     <div>
-                        <p class="font-bold text-lg text-gray-900">${p.patientName}</p>
-                        <p class="text-sm text-gray-600">${p.age} years • ${p.gender}</p>
+                        <h4 class="font-bold text-gray-900">${p.patientName}</h4>
+                        <p class="text-sm text-gray-600">${p.age} years, ${p.gender}</p>
                     </div>
-                    <span class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-semibold">
-                        <i class="fas fa-robot mr-1"></i>AI Generated
-                    </span>
+                    <span class="text-xs text-gray-500">${new Date(p.createdAt).toLocaleDateString()}</span>
                 </div>
-                <div class="bg-blue-50 p-3 rounded-lg mb-2 border-l-2 border-blue-500">
-                    <p class="text-sm text-gray-700 font-medium">${p.diagnosis}</p>
-                </div>
-                <div class="flex items-center justify-between text-xs text-gray-500">
-                    <span><i class="fas fa-pills mr-1"></i>${p.medicines.length} medicine(s)</span>
-                    <span><i class="fas fa-clock mr-1"></i>${new Date(p.createdAt).toLocaleString()}</span>
-                </div>
+                <p class="text-sm text-gray-700 mb-2"><strong>Diagnosis:</strong> ${p.diagnosis}</p>
+                <p class="text-xs text-gray-600">${p.medicines.length} medicine(s) prescribed</p>
             </div>
         `).join('');
     }
@@ -784,17 +814,6 @@ function showHistory() {
 
 function closeHistory() {
     document.getElementById('historyModal').classList.add('hidden');
-}
-
-function showSettings() {
-    document.getElementById('settingsModal').classList.remove('hidden');
-    const currentKey = localStorage.getItem('groq_api_key') || '';
-    document.getElementById('apiKeyInput').value = currentKey;
-    loadClinicBrandingToForm();
-}
-
-function closeSettings() {
-    document.getElementById('settingsModal').classList.add('hidden');
 }
 
 async function saveApiKey() {
