@@ -4,6 +4,7 @@ class PrescriptionDB {
         this.prescriptions = JSON.parse(localStorage.getItem('prescriptions') || '[]');
         this.patients = JSON.parse(localStorage.getItem('patients') || '[]');
         this.voiceCommandCount = parseInt(localStorage.getItem('voiceCommandCount') || '0');
+        this.clinicBranding = JSON.parse(localStorage.getItem('clinicBranding') || '{}');
     }
 
     savePrescription(data) {
@@ -38,6 +39,38 @@ class PrescriptionDB {
         return this.prescriptions;
     }
 
+    saveClinicBranding(branding) {
+        this.clinicBranding = branding;
+        localStorage.setItem('clinicBranding', JSON.stringify(branding));
+        this.applyBranding();
+    }
+
+    getClinicBranding() {
+        return this.clinicBranding;
+    }
+
+    applyBranding() {
+        const branding = this.clinicBranding;
+        
+        // Apply logo
+        if (branding.logo) {
+            document.getElementById('clinicLogo').src = branding.logo;
+            document.getElementById('clinicLogoContainer').classList.remove('hidden');
+            document.getElementById('defaultLogo').classList.add('hidden');
+        } else {
+            document.getElementById('clinicLogoContainer').classList.add('hidden');
+            document.getElementById('defaultLogo').classList.remove('hidden');
+        }
+        
+        // Apply clinic name and tagline
+        if (branding.clinicName) {
+            document.getElementById('clinicName').textContent = branding.clinicName;
+        }
+        if (branding.tagline) {
+            document.getElementById('clinicTagline').textContent = branding.tagline;
+        }
+    }
+
     updateStats() {
         document.getElementById('totalPrescriptions').textContent = this.prescriptions.length;
         document.getElementById('totalPatients').textContent = this.patients.length;
@@ -53,8 +86,92 @@ let isListening = false;
 
 // Initialize
 db.updateStats();
+db.applyBranding();
 initVoiceRecognition();
 checkApiKey();
+loadClinicBrandingToForm();
+
+// Logo Upload Handler
+function handleLogoUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Validate file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+        alert('File size must be less than 2MB');
+        return;
+    }
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+        alert('Please upload an image file (PNG, JPG, SVG)');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const logoData = e.target.result;
+        document.getElementById('logoPreview').src = logoData;
+        document.getElementById('logoPreviewContainer').classList.remove('hidden');
+        document.getElementById('logoUploadPrompt').classList.add('hidden');
+        
+        // Store temporarily (will be saved when user clicks Save button)
+        document.getElementById('logoInput').dataset.logoData = logoData;
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeLogo(event) {
+    event.stopPropagation();
+    document.getElementById('logoPreview').src = '';
+    document.getElementById('logoPreviewContainer').classList.add('hidden');
+    document.getElementById('logoUploadPrompt').classList.remove('hidden');
+    document.getElementById('logoInput').value = '';
+    delete document.getElementById('logoInput').dataset.logoData;
+}
+
+function saveClinicBranding() {
+    const branding = {
+        logo: document.getElementById('logoInput').dataset.logoData || db.getClinicBranding().logo || '',
+        clinicName: document.getElementById('clinicNameInput').value || 'MediScript AI',
+        tagline: document.getElementById('clinicTaglineInput').value || 'Enterprise Medical Platform',
+        doctorName: document.getElementById('doctorNameInput').value || 'Dr. Kumar Vaibhav',
+        credentials: document.getElementById('doctorCredentialsInput').value || 'MBBS, MD (Internal Medicine)',
+        regNumber: document.getElementById('doctorRegInput').value || 'MED/2024/12345',
+        address: document.getElementById('clinicAddressInput').value || '',
+        phone: document.getElementById('clinicPhoneInput').value || '',
+        email: document.getElementById('clinicEmailInput').value || ''
+    };
+    
+    db.saveClinicBranding(branding);
+    
+    // Show success notification
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-20 right-6 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 slide-in';
+    notification.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Clinic branding saved successfully!';
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+}
+
+function loadClinicBrandingToForm() {
+    const branding = db.getClinicBranding();
+    
+    if (branding.logo) {
+        document.getElementById('logoPreview').src = branding.logo;
+        document.getElementById('logoPreviewContainer').classList.remove('hidden');
+        document.getElementById('logoUploadPrompt').classList.add('hidden');
+        document.getElementById('logoInput').dataset.logoData = branding.logo;
+    }
+    
+    document.getElementById('clinicNameInput').value = branding.clinicName || '';
+    document.getElementById('clinicTaglineInput').value = branding.tagline || '';
+    document.getElementById('doctorNameInput').value = branding.doctorName || '';
+    document.getElementById('doctorCredentialsInput').value = branding.credentials || '';
+    document.getElementById('doctorRegInput').value = branding.regNumber || '';
+    document.getElementById('clinicAddressInput').value = branding.address || '';
+    document.getElementById('clinicPhoneInput').value = branding.phone || '';
+    document.getElementById('clinicEmailInput').value = branding.email || '';
+}
 
 // REAL AI INTEGRATION - GROQ API
 async function generateWithRealAI(symptoms, age, gender) {
@@ -369,15 +486,23 @@ function displayPrescription(data) {
         day: 'numeric' 
     });
     
+    const branding = db.getClinicBranding();
+    const doctorName = branding.doctorName || 'Dr. Kumar Vaibhav';
+    const credentials = branding.credentials || 'MBBS, MD (Internal Medicine)';
+    const regNumber = branding.regNumber || 'MED/2024/12345';
+    
     document.getElementById('preview').innerHTML = `
         <div class="space-y-6">
-            <!-- Header -->
+            <!-- Header with Logo -->
             <div class="border-b-2 border-blue-600 pb-4">
                 <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="text-2xl font-bold text-gray-900">Dr. Kumar Vaibhav</h3>
-                        <p class="text-sm text-gray-600 font-medium">MBBS, MD (Internal Medicine)</p>
-                        <p class="text-xs text-gray-500 mt-1">Reg. No: MED/2024/12345</p>
+                    <div class="flex items-center space-x-4">
+                        ${branding.logo ? `<img src="${branding.logo}" alt="Clinic Logo" class="logo-preview">` : ''}
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900">${doctorName}</h3>
+                            <p class="text-sm text-gray-600 font-medium">${credentials}</p>
+                            <p class="text-xs text-gray-500 mt-1">Reg. No: ${regNumber}</p>
+                        </div>
                     </div>
                     <div class="text-right">
                         <div class="bg-blue-100 px-4 py-2 rounded-lg">
@@ -483,7 +608,7 @@ function displayPrescription(data) {
                         <p><i class="fas fa-check-circle text-green-600 mr-1"></i>Auto-saved to secure database</p>
                     </div>
                     <div class="text-right">
-                        <p class="font-semibold text-gray-700">Dr. Kumar Vaibhav</p>
+                        <p class="font-semibold text-gray-700">${doctorName}</p>
                         <p class="text-xs">Digital Signature</p>
                     </div>
                 </div>
@@ -512,6 +637,12 @@ function downloadPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     
+    const branding = db.getClinicBranding();
+    const doctorName = branding.doctorName || 'Dr. Kumar Vaibhav';
+    const credentials = branding.credentials || 'MBBS, MD (Internal Medicine)';
+    const regNumber = branding.regNumber || 'MED/2024/12345';
+    const clinicName = branding.clinicName || 'MediScript AI';
+    
     // Header
     doc.setFontSize(22);
     doc.setFont(undefined, 'bold');
@@ -519,16 +650,16 @@ function downloadPDF() {
     
     doc.setFontSize(10);
     doc.setFont(undefined, 'normal');
-    doc.text('MediScript AI - Enterprise Medical Platform', 105, 27, { align: 'center' });
+    doc.text(clinicName, 105, 27, { align: 'center' });
     
     // Doctor Info
     doc.setFontSize(14);
     doc.setFont(undefined, 'bold');
-    doc.text('Dr. Kumar Vaibhav', 20, 40);
+    doc.text(doctorName, 20, 40);
     doc.setFontSize(10);
     doc.setFont(undefined, 'normal');
-    doc.text('MBBS, MD (Internal Medicine)', 20, 46);
-    doc.text('Reg. No: MED/2024/12345', 20, 51);
+    doc.text(credentials, 20, 46);
+    doc.text(`Reg. No: ${regNumber}`, 20, 51);
     
     // Patient Info
     doc.setFontSize(11);
@@ -583,8 +714,8 @@ function downloadPDF() {
     
     // Footer
     doc.setFontSize(8);
-    doc.text('Generated by MediScript AI - Powered by Groq (Llama 3.3 70B)', 20, 280);
-    doc.text('Dr. Kumar Vaibhav', 150, 280);
+    doc.text(`Generated by ${clinicName} - Powered by Groq (Llama 3.3 70B)`, 20, 280);
+    doc.text(doctorName, 150, 280);
     
     doc.save(`prescription-${currentPrescription.patientName}-${Date.now()}.pdf`);
     speak('PDF downloaded.');
@@ -659,6 +790,7 @@ function showSettings() {
     document.getElementById('settingsModal').classList.remove('hidden');
     const currentKey = localStorage.getItem('groq_api_key') || '';
     document.getElementById('apiKeyInput').value = currentKey;
+    loadClinicBrandingToForm();
 }
 
 function closeSettings() {
