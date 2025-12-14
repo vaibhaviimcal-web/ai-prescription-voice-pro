@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediScript AI - Enterprise Medical Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Your existing styles here -->
+    <style>
+        /* Copy all your existing styles from current index.html */
+    </style>
+</head>
+<body>
+    
+    <!-- Copy all your existing HTML content here -->
+    <!-- (Header, forms, modals, etc.) -->
+    
+    
+    <!-- ============================================ -->
+    <!-- MODULAR ARCHITECTURE - ONLY 3 SCRIPTS! -->
+    <!-- ============================================ -->
+    
+    <!-- 1. Configuration System -->
+    <script src="config.js"></script>
+    
+    <!-- 2. Feature Manager -->
+    <script src="feature-manager.js"></script>
+    
+    <!-- 3. Module Loader (loads everything else automatically) -->
+    <script src="module-loader.js"></script>
+    
+    <!-- 
+        That's it! The module loader will automatically load:
+        - app.js (core)
+        - voice-inline.js (if voiceInput enabled)
+        - generate-prescription.js (if aiPrescription enabled)
+        - prescription-templates.js (if templates enabled)
+        - whatsapp-share.js (if whatsappShare enabled)
+        - multi-language.js (if multiLanguage enabled)
+        - dosage-calculator.js (if dosageCalculator enabled)
+        - prescription-validator.js (if safetyValidation enabled)
+        - safety-integration.js (if safetyValidation enabled)
+        - All bug fixes
+        
+        To enable/disable features, edit config.js or use:
+        features.enable('featureName')
+        features.disable('featureName')
+    -->
+    
+</body>
+</html>
