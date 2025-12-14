@@ -350,17 +350,11 @@
         },
 
         injectUI() {
-            // Add Templates button next to Reset button
-            const resetButton = document.querySelector('button[onclick="clearForm()"]');
-            if (resetButton && !document.getElementById('templatesBtn')) {
-                const templatesBtn = document.createElement('button');
-                templatesBtn.id = 'templatesBtn';
-                templatesBtn.type = 'button';
-                templatesBtn.className = 'text-sm text-blue-600 hover:text-blue-800 font-semibold flex items-center space-x-1';
-                templatesBtn.innerHTML = '<i class="fas fa-file-medical mr-1"></i>Templates';
+            // Connect existing Templates button to modal
+            const templatesBtn = document.getElementById('templatesBtn');
+            if (templatesBtn) {
                 templatesBtn.onclick = () => this.showTemplatesModal();
-                
-                resetButton.parentElement.insertBefore(templatesBtn, resetButton);
+                console.log('✅ Templates button connected');
             }
 
             // Create Templates Modal
@@ -388,6 +382,7 @@
                     </div>
                 `;
                 document.body.appendChild(modal);
+                console.log('✅ Templates modal created');
             }
         },
 
