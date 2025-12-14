@@ -1,0 +1,15 @@
+COPY THIS LINE AND ADD IT TO index.html (after line 478, before </body>):
+
+    <!-- FEATURE 9: Multi-Language Support -->
+    <script src="multi-language.js"></script>
+
+FULL CONTEXT (lines 476-481 of index.html should look like this):
+
+    <!-- Load inline voice script FIRST -->
+    <script src="voice-inline.js"></script>
+    <!-- Then load main app script -->
+    <script src="app.js"></script>
+    <!-- FEATURE 9: Multi-Language Support -->
+    <script src="multi-language.js"></script>
+</body>
+</html>
