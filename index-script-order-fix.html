@@ -1,0 +1,32 @@
+<!-- SCRIPT LOADING ORDER FIX -->
+<!-- Add this line to index.html BEFORE prescription-templates.js -->
+
+    <!-- Load database first -->
+    <script src="database.js"></script>
+    
+    <!-- Then load main app script -->
+    <script src="app.js"></script>
+    
+    <!-- CRITICAL: Load setupBanner fix immediately after app.js -->
+    <script src="app-setupbanner-fix.js"></script>
+    
+    <!-- BUG FIXES -->
+    <script src="branding-modal-fix.js"></script>
+    <script src="api-key-check-fix.js"></script>
+    
+    <!-- WEEK 1 SAFETY FEATURES -->
+    <script src="dosage-calculator.js"></script>
+    <script src="prescription-validator.js"></script>
+    <script src="safety-integration.js"></script>
+    
+    <!-- CORE PRESCRIPTION GENERATION - MUST LOAD BEFORE TEMPLATES -->
+    <script src="generate-prescription.js"></script>
+    
+    <!-- WEEK 2 FEATURES -->
+    <script src="prescription-templates.js"></script>
+    <script src="whatsapp-share.js"></script>
+    
+    <!-- FEATURE 9: Multi-Language Support (Hindi, Tamil, Telugu, Bengali) -->
+    <script src="multi-language.js"></script>
+</body>
+</html>
