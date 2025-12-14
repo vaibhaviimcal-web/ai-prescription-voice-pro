@@ -50,6 +50,17 @@
         if (window.PrescriptionValidator) {
             const validator = new PrescriptionValidator();
             
+            // Get clinic branding from localStorage to include license number
+            let branding = {};
+            try {
+                const brandingData = localStorage.getItem('clinicBranding');
+                if (brandingData) {
+                    branding = JSON.parse(brandingData);
+                }
+            } catch (e) {
+                console.warn('Could not load clinic branding:', e);
+            }
+            
             // Prepare prescription data for validation
             const prescriptionData = {
                 patientName: prescription.patientName,
@@ -59,7 +70,8 @@
                 symptoms: prescription.symptoms,
                 diagnosis: prescription.diagnosis,
                 medications: prescription.medicines || [],
-                doctorName: prescription.doctorName || 'Dr. Kumar Vaibhav'
+                doctorName: prescription.doctorName || branding.doctorName || 'Dr. Kumar Vaibhav',
+                licenseNumber: branding.regNumber || null // Include license from branding
             };
 
             results.validation = validator.validate(prescriptionData);
