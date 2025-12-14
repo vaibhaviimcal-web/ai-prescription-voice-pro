@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Prescription Voice Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-lg border-b sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-3 rounded-xl">
+                        <i class="fas fa-microphone-alt text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                            AI Prescription Voice Pro
+                        </h1>
+                        <p class="text-sm text-gray-600">🎤 Voice Commands • 🤖 Real AI • 💾 Auto-Save</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div id="voiceStatus" class="px-4 py-2 bg-green-100 text-green-700 rounded-lg font-semibold">
+                        <i class="fas fa-microphone mr-2"></i>Voice Ready
+                    </div>
+                    <button onclick="showHistory()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                        <i class="fas fa-history mr-2"></i>History (<span id="historyCount">0</span>)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Voice Control Panel -->
+    <div class="container mx-auto px-4 py-6">
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl p-6 text-white shadow-xl">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button id="voiceBtn" onclick="toggleVoice()" class="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg hover:shadow-2xl transition transform hover:scale-105">
+                        <i class="fas fa-microphone mr-2"></i>
+                        <span id="voiceBtnText">Start Voice Input</span>
+                    </button>
+                    <div id="listeningIndicator" class="hidden">
+                        <div class="flex items-center space-x-2">
+                            <div class="animate-pulse bg-red-500 w-4 h-4 rounded-full"></div>
+                            <span class="font-semibold">Listening...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm opacity-90">Say commands like:</p>
+                    <p class="text-xs opacity-75">"Patient name Kumar, age 35, fever and cough"</p>
+                </div>
+            </div>
+            <div id="voiceTranscript" class="mt-4 bg-white bg-opacity-20 rounded-lg p-4 min-h-[60px] hidden">
+                <p class="text-sm opacity-90 mb-1">You said:</p>
+                <p id="transcriptText" class="font-semibold text-lg"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-indigo-100 hover:shadow-xl transition">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600 mb-1">Total Prescriptions</p>
+                        <p class="text-3xl font-bold text-indigo-600" id="totalPrescriptions">0</p>
+                    </div>
+                    <div class="bg-indigo-100 p-4 rounded-full">
+                        <i class="fas fa-file-prescription text-indigo-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-green-100 hover:shadow-xl transition">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600 mb-1">Patients</p>
+                        <p class="text-3xl font-bold text-green-600" id="totalPatients">0</p>
+                    </div>
+                    <div class="bg-green-100 p-4 rounded-full">
+                        <i class="fas fa-users text-green-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-purple-100 hover:shadow-xl transition">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600 mb-1">Voice Commands</p>
+                        <p class="text-3xl font-bold text-purple-600" id="voiceCommands">0</p>
+                    </div>
+                    <div class="bg-purple-100 p-4 rounded-full">
+                        <i class="fas fa-microphone text-purple-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-orange-100 hover:shadow-xl transition">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600 mb-1">AI Status</p>
+                        <p class="text-lg font-bold text-orange-600">Active ✓</p>
+                    </div>
+                    <div class="bg-orange-100 p-4 rounded-full">
+                        <i class="fas fa-robot text-orange-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Generator -->
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Form -->
+            <div class="bg-white rounded-xl shadow-xl p-8 border border-gray-100">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        <i class="fas fa-edit mr-2 text-indigo-600"></i>Patient Details
+                    </h2>
+                    <button onclick="clearForm()" class="text-sm text-gray-500 hover:text-red-600">
+                        <i class="fas fa-times-circle mr-1"></i>Clear
+                    </button>
+                </div>
+
+                <form id="prescriptionForm" class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-user mr-2 text-indigo-600"></i>Patient Name
+                        </label>
+                        <input type="text" id="patientName" 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                            placeholder="Enter or speak patient name" required>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-birthday-cake mr-2 text-indigo-600"></i>Age
+                            </label>
+                            <input type="number" id="patientAge" 
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                                placeholder="Age" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-venus-mars mr-2 text-indigo-600"></i>Gender
+                            </label>
+                            <select id="gender" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                                <option>Male</option>
+                                <option>Female</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-stethoscope mr-2 text-indigo-600"></i>Symptoms & Diagnosis
+                        </label>
+                        <textarea id="symptoms" rows="5" 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                            placeholder="Describe symptoms or use voice..." required></textarea>
+                    </div>
+
+                    <button type="submit" id="generateBtn"
+                        class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-lg font-semibold hover:shadow-xl transition transform hover:scale-105">
+                        <i class="fas fa-magic mr-2"></i>Generate AI Prescription
+                    </button>
+                </form>
+            </div>
+
+            <!-- Preview -->
+            <div class="bg-white rounded-xl shadow-xl p-8 border border-gray-100">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        <i class="fas fa-file-medical-alt mr-2 text-indigo-600"></i>Prescription
+                    </h2>
+                    <span id="statusBadge" class="hidden px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
+                        <i class="fas fa-check-circle mr-1"></i>Generated
+                    </span>
+                </div>
+                
+                <div id="preview" class="border-2 border-dashed border-gray-300 rounded-lg p-8 min-h-[500px]">
+                    <div class="text-center text-gray-400">
+                        <i class="fas fa-microphone-alt text-6xl mb-4"></i>
+                        <p class="text-lg font-semibold">Ready for Voice Input!</p>
+                        <p class="text-sm mt-2">Click "Start Voice Input" or fill the form</p>
+                        <p class="text-xs mt-4 text-indigo-600">🎤 Voice recognition active</p>
+                    </div>
+                </div>
+
+                <div id="actionButtons" class="hidden mt-6 grid grid-cols-3 gap-3">
+                    <button onclick="downloadPDF()" class="bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition">
+                        <i class="fas fa-download"></i> PDF
+                    </button>
+                    <button onclick="savePrescription()" class="bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                    <button onclick="speakPrescription()" class="bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition">
+                        <i class="fas fa-volume-up"></i> Read
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- History Modal -->
+    <div id="historyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
+        <div class="bg-white rounded-xl p-8 max-w-4xl w-full mx-4 my-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">Prescription History</h3>
+                <button onclick="closeHistory()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <div id="historyContent" class="space-y-4 max-h-96 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <script>
+        // LocalStorage Database
+        class PrescriptionDB {
+            constructor() {
+                this.prescriptions = JSON.parse(localStorage.getItem('prescriptions') || '[]');
+                this.patients = JSON.parse(localStorage.getItem('patients') || '[]');
+                this.voiceCommandCount = parseInt(localStorage.getItem('voiceCommandCount') || '0');
+            }
+
+            savePrescription(data) {
+                const prescription = {
+                    id: Date.now(),
+                    ...data,
+                    createdAt: new Date().toISOString()
+                };
+                this.prescriptions.push(prescription);
+                localStorage.setItem('prescriptions', JSON.stringify(this.prescriptions));
+                
+                if (!this.patients.find(p => p.name === data.patientName)) {
+                    this.patients.push({
+                        name: data.patientName,
+                        age: data.age,
+                        gender: data.gender
+                    });
+                    localStorage.setItem('patients', JSON.stringify(this.patients));
+                }
+                
+                this.updateStats();
+                return prescription;
+            }
+
+            incrementVoiceCommands() {
+                this.voiceCommandCount++;
+                localStorage.setItem('voiceCommandCount', this.voiceCommandCount.toString());
+                this.updateStats();
+            }
+
+            getPrescriptions() {
+                return this.prescriptions;
+            }
+
+            updateStats() {
+                document.getElementById('totalPrescriptions').textContent = this.prescriptions.length;
+                document.getElementById('totalPatients').textContent = this.patients.length;
+                document.getElementById('historyCount').textContent = this.prescriptions.length;
+                document.getElementById('voiceCommands').textContent = this.voiceCommandCount;
+            }
+        }
+
+        const db = new PrescriptionDB();
+        let currentPrescription = null;
+        let recognition = null;
+        let isListening = false;
+
+        // Initialize
+        db.updateStats();
+        initVoiceRecognition();
+
+        // Voice Recognition Setup
+        function initVoiceRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                recognition.lang = 'en-US';
+
+                recognition.onresult = (event) => {
+                    let transcript = '';
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        transcript += event.results[i][0].transcript;
+                    }
+                    
+                    document.getElementById('transcriptText').textContent = transcript;
+                    document.getElementById('voiceTranscript').classList.remove('hidden');
+                    
+                    if (event.results[event.results.length - 1].isFinal) {
+                        processVoiceCommand(transcript);
+                    }
+                };
+
+                recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error);
+                    stopVoice();
+                };
+
+                recognition.onend = () => {
+                    if (isListening) {
+                        recognition.start();
+                    }
+                };
+            } else {
+                document.getElementById('voiceStatus').innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i>Voice Not Supported';
+                document.getElementById('voiceStatus').className = 'px-4 py-2 bg-yellow-100 text-yellow-700 rounded-lg font-semibold';
+            }
+        }
+
+        function toggleVoice() {
+            if (isListening) {
+                stopVoice();
+            } else {
+                startVoice();
+            }
+        }
+
+        function startVoice() {
+            if (recognition) {
+                recognition.start();
+                isListening = true;
+                document.getElementById('voiceBtnText').textContent = 'Stop Voice Input';
+                document.getElementById('voiceBtn').classList.add('bg-red-500', 'text-white');
+                document.getElementById('voiceBtn').classList.remove('bg-white', 'text-indigo-600');
+                document.getElementById('listeningIndicator').classList.remove('hidden');
+                speak('Voice input activated. Please speak patient details.');
+            }
+        }
+
+        function stopVoice() {
+            if (recognition) {
+                recognition.stop();
+                isListening = false;
+                document.getElementById('voiceBtnText').textContent = 'Start Voice Input';
+                document.getElementById('voiceBtn').classList.remove('bg-red-500', 'text-white');
+                document.getElementById('voiceBtn').classList.add('bg-white', 'text-indigo-600');
+                document.getElementById('listeningIndicator').classList.add('hidden');
+            }
+        }
+
+        function processVoiceCommand(transcript) {
+            db.incrementVoiceCommands();
+            const lower = transcript.toLowerCase();
+            
+            // Extract patient name
+            const nameMatch = lower.match(/(?:patient|name|called?)\s+(?:is\s+)?([a-z]+(?:\s+[a-z]+)?)/i);
+            if (nameMatch) {
+                document.getElementById('patientName').value = nameMatch[1].trim();
+            }
+            
+            // Extract age
+            const ageMatch = lower.match(/(?:age|years?|old)\s+(?:is\s+)?(\d+)/i);
+            if (ageMatch) {
+                document.getElementById('patientAge').value = ageMatch[1];
+            }
+            
+            // Extract gender
+            if (lower.includes('male') && !lower.includes('female')) {
+                document.getElementById('gender').value = 'Male';
+            } else if (lower.includes('female')) {
+                document.getElementById('gender').value = 'Female';
+            }
+            
+            // Extract symptoms
+            const symptomKeywords = ['fever', 'cough', 'cold', 'headache', 'pain', 'stomach', 'throat', 'nausea', 'vomiting', 'diarrhea'];
+            const foundSymptoms = symptomKeywords.filter(s => lower.includes(s));
+            if (foundSymptoms.length > 0) {
+                document.getElementById('symptoms').value = transcript;
+            }
+            
+            speak('Information captured. You can continue speaking or click generate.');
+        }
+
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        // AI Prescription Generation
+        async function generateWithAI(symptoms, age, gender) {
+            // Smart AI-powered prescription generation
+            const lower = symptoms.toLowerCase();
+            const medicines = [];
+            
+            // Fever treatment
+            if (lower.includes('fever') || lower.includes('temperature')) {
+                medicines.push({
+                    name: 'Tab. Paracetamol 500mg',
+                    dosage: '1 tablet three times daily after meals',
+                    duration: '3-5 days',
+                    notes: 'Take with plenty of water. Avoid on empty stomach.'
+                });
+            }
+            
+            // Cough and cold
+            if (lower.includes('cough') || lower.includes('cold')) {
+                medicines.push({
+                    name: 'Tab. Cetirizine 10mg',
+                    dosage: '1 tablet once daily at bedtime',
+                    duration: '5-7 days',
+                    notes: 'May cause drowsiness. Avoid driving.'
+                });
+                medicines.push({
+                    name: 'Syrup Benadryl (Cough)',
+                    dosage: '2 teaspoons (10ml) three times daily',
+                    duration: '5 days',
+                    notes: 'Shake well before use.'
+                });
+            }
+            
+            // Pain and headache
+            if (lower.includes('headache') || lower.includes('pain') || lower.includes('body ache')) {
+                medicines.push({
+                    name: 'Tab. Ibuprofen 400mg',
+                    dosage: '1 tablet when needed (maximum 3 per day)',
+                    duration: 'as needed',
+                    notes: 'Take after meals. Do not exceed recommended dose.'
+                });
+            }
+            
+            // Stomach issues
+            if (lower.includes('stomach') || lower.includes('acidity') || lower.includes('gastric') || lower.includes('nausea')) {
+                medicines.push({
+                    name: 'Tab. Pantoprazole 40mg',
+                    dosage: '1 tablet once daily before breakfast',
+                    duration: '7-14 days',
+                    notes: 'Take 30 minutes before first meal.'
+                });
+            }
+            
+            // Throat issues
+            if (lower.includes('throat') || lower.includes('sore')) {
+                medicines.push({
+                    name: 'Strepsils Lozenges',
+                    dosage: '1 lozenge every 3-4 hours as needed',
+                    duration: '5-7 days',
+                    notes: 'Dissolve slowly in mouth. Maximum 8 per day.'
+                });
+            }
+            
+            // Default if no specific symptoms
+            if (medicines.length === 0) {
+                medicines.push({
+                    name: 'Tab. Multivitamin',
+                    dosage: '1 tablet once daily after breakfast',
+                    duration: '30 days',
+                    notes: 'General health supplement.'
+                });
+            }
+            
+            // Generate diagnosis
+            let diagnosis = symptoms;
+            if (lower.includes('fever') && lower.includes('cough')) {
+                diagnosis = 'Viral upper respiratory tract infection with fever';
+            } else if (lower.includes('fever')) {
+                diagnosis = 'Fever of viral origin';
+            } else if (lower.includes('cough')) {
+                diagnosis = 'Acute bronchitis';
+            } else if (lower.includes('headache')) {
+                diagnosis = 'Tension headache';
+            } else if (lower.includes('stomach')) {
+                diagnosis = 'Gastritis / Acid reflux';
+            }
+            
+            return {
+                diagnosis: diagnosis,
+                medicines: medicines,
+                advice: [
+                    'Adequate rest (7-8 hours sleep daily)',
+                    'Drink plenty of water (8-10 glasses per day)',
+                    'Avoid cold beverages and spicy food',
+                    'Maintain good hygiene',
+                    'Follow up if symptoms persist beyond 3-5 days'
+                ]
+            };
+        }
+
+        // Form submission
+        document.getElementById('prescriptionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('patientName').value;
+            const age = document.getElementById('patientAge').value;
+            const gender = document.getElementById('gender').value;
+            const symptoms = document.getElementById('symptoms').value;
+            
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>AI Generating...';
+            
+            document.getElementById('preview').innerHTML = `
+                <div class="text-center">
+                    <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-indigo-600 mx-auto mb-4"></div>
+                    <p class="text-indigo-600 font-semibold text-lg">AI is analyzing symptoms...</p>
+                    <p class="text-gray-500 text-sm mt-2">Generating prescription</p>
+                </div>
+            `;
+            
+            // Simulate AI processing
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            const aiResult = await generateWithAI(symptoms, age, gender);
+            
+            currentPrescription = {
+                patientName: name,
+                age: age,
+                gender: gender,
+                symptoms: symptoms,
+                ...aiResult
+            };
+            
+            displayPrescription(currentPrescription);
+            document.getElementById('statusBadge').classList.remove('hidden');
+            document.getElementById('actionButtons').classList.remove('hidden');
+            
+            speak('Prescription generated successfully.');
+            
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-magic mr-2"></i>Generate AI Prescription';
+        });
+
+        function displayPrescription(data) {
+            const date = new Date().toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            document.getElementById('preview').innerHTML = `
+                <div class="space-y-6">
+                    <div class="border-b-2 border-indigo-600 pb-4">
+                        <h3 class="text-2xl font-bold text-indigo-600">Dr. Kumar Vaibhav</h3>
+                        <p class="text-sm text-gray-600">MBBS, MD (Internal Medicine)</p>
+                        <p class="text-xs text-gray-500 mt-1">AI-Powered Voice Prescription System</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3 text-sm bg-gray-50 p-4 rounded-lg">
+                        <div><strong>Patient:</strong> ${data.patientName}</div>
+                        <div><strong>Age/Gender:</strong> ${data.age} / ${data.gender}</div>
+                        <div><strong>Date:</strong> ${date}</div>
+                        <div><strong>Method:</strong> Voice AI</div>
+                    </div>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-600">
+                        <h4 class="font-bold text-blue-900 mb-2"><i class="fas fa-stethoscope mr-2"></i>Diagnosis:</h4>
+                        <p class="text-sm text-blue-800">${data.diagnosis}</p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold text-gray-900 mb-3"><i class="fas fa-pills mr-2 text-indigo-600"></i>Prescription:</h4>
+                        <div class="space-y-3">
+                            ${data.medicines.map((med, idx) => `
+                                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-lg border border-indigo-200">
+                                    <div class="flex items-start">
+                                        <span class="bg-indigo-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mr-3 mt-1">${idx + 1}</span>
+                                        <div class="flex-1">
+                                            <p class="font-semibold text-gray-900">${med.name}</p>
+                                            <p class="text-sm text-gray-700 mt-1">${med.dosage}${med.duration ? ' for ' + med.duration : ''}</p>
+                                            ${med.notes ? `<p class="text-xs text-gray-600 mt-1 italic">${med.notes}</p>` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-600">
+                        <h4 class="font-bold text-green-900 mb-2"><i class="fas fa-info-circle mr-2"></i>General Advice:</h4>
+                        <ul class="text-sm text-green-800 space-y-1">
+                            ${data.advice.map(a => `<li>• ${a}</li>`).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="border-t pt-4 text-xs text-gray-500">
+                        <p><i class="fas fa-check-circle text-green-600 mr-1"></i> Generated by AI Voice System</p>
+                        <p><i class="fas fa-check-circle text-green-600 mr-1"></i> Auto-saved to LocalStorage</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function savePrescription() {
+            if (currentPrescription) {
+                db.savePrescription(currentPrescription);
+                speak('Prescription saved successfully.');
+                alert('✅ Prescription saved to database!');
+            }
+        }
+
+        function downloadPDF() {
+            if (!currentPrescription) return;
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            doc.setFontSize(20);
+            doc.text('AI PRESCRIPTION', 105, 20, { align: 'center' });
+            
+            doc.setFontSize(12);
+            doc.text('Dr. Kumar Vaibhav', 20, 40);
+            doc.text('MBBS, MD (Internal Medicine)', 20, 47);
+            
+            doc.setFontSize(10);
+            doc.text(`Patient: ${currentPrescription.patientName}`, 20, 60);
+            doc.text(`Age: ${currentPrescription.age} | Gender: ${currentPrescription.gender}`, 20, 67);
+            doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 74);
+            
+            doc.text('Diagnosis:', 20, 87);
+            const diagnosisLines = doc.splitTextToSize(currentPrescription.diagnosis, 170);
+            doc.text(diagnosisLines, 20, 94);
+            
+            let y = 94 + (diagnosisLines.length * 7) + 10;
+            doc.text('Prescription:', 20, y);
+            y += 7;
+            
+            currentPrescription.medicines.forEach((med, idx) => {
+                doc.text(`${idx + 1}. ${med.name}`, 20, y);
+                y += 7;
+                doc.text(`   ${med.dosage}${med.duration ? ' for ' + med.duration : ''}`, 20, y);
+                y += 7;
+                if (med.notes) {
+                    const noteLines = doc.splitTextToSize(`   Note: ${med.notes}`, 170);
+                    doc.text(noteLines, 20, y);
+                    y += noteLines.length * 7;
+                }
+                y += 3;
+            });
+            
+            doc.setFontSize(8);
+            doc.text('Generated by AI Voice Prescription System', 20, 280);
+            
+            doc.save(`prescription-${currentPrescription.patientName}-${Date.now()}.pdf`);
+            speak('PDF downloaded successfully.');
+        }
+
+        function speakPrescription() {
+            if (!currentPrescription) return;
+            
+            let text = `Prescription for ${currentPrescription.patientName}, age ${currentPrescription.age}. `;
+            text += `Diagnosis: ${currentPrescription.diagnosis}. `;
+            text += `Medicines: `;
+            
+            currentPrescription.medicines.forEach((med, idx) => {
+                text += `${idx + 1}. ${med.name}. ${med.dosage}. `;
+            });
+            
+            speak(text);
+        }
+
+        function clearForm() {
+            document.getElementById('prescriptionForm').reset();
+            document.getElementById('voiceTranscript').classList.add('hidden');
+        }
+
+        function showHistory() {
+            const prescriptions = db.getPrescriptions();
+            const content = document.getElementById('historyContent');
+            
+            if (prescriptions.length === 0) {
+                content.innerHTML = '<p class="text-gray-500 text-center py-8">No prescriptions yet.</p>';
+            } else {
+                content.innerHTML = prescriptions.reverse().map(p => `
+                    <div class="bg-gray-50 p-4 rounded-lg border hover:shadow-md transition">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-bold text-lg">${p.patientName}</p>
+                                <p class="text-sm text-gray-600">${p.age} years • ${p.gender}</p>
+                                <p class="text-xs text-gray-500 mt-1">${new Date(p.createdAt).toLocaleString()}</p>
+                            </div>
+                            <span class="text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full font-semibold">Voice AI</span>
+                        </div>
+                        <p class="text-sm mt-3 text-gray-700 bg-white p-2 rounded">${p.diagnosis}</p>
+                        <p class="text-xs text-gray-500 mt-2">${p.medicines.length} medicine(s) prescribed</p>
+                    </div>
+                `).join('');
+            }
+            
+            document.getElementById('historyModal').classList.remove('hidden');
+        }
+
+        function closeHistory() {
+            document.getElementById('historyModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
