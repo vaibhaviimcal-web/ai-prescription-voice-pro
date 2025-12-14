@@ -1,0 +1,156 @@
+{
+  "allergies": [
+    {
+      "allergen": "penicillin",
+      "relatedDrugs": ["amoxicillin", "ampicillin", "penicillin", "amoxil", "mox", "novamox", "augmentin"],
+      "crossReactions": ["cephalosporins", "cefixime", "ceftriaxone", "cephalexin"],
+      "severity": "high",
+      "symptoms": "Rash, hives, swelling, difficulty breathing, anaphylaxis",
+      "alternatives": "Azithromycin, Clarithromycin, Fluoroquinolones (Ciprofloxacin, Levofloxacin)",
+      "recommendation": "CONTRAINDICATED - Do not prescribe any penicillin-based antibiotics. Use with extreme caution with cephalosporins (10% cross-reactivity)."
+    },
+    {
+      "allergen": "sulfa",
+      "relatedDrugs": ["sulfamethoxazole", "trimethoprim", "bactrim", "septran", "sulfasalazine", "sulfadiazine"],
+      "crossReactions": ["furosemide", "thiazide diuretics", "sulfonylureas"],
+      "severity": "high",
+      "symptoms": "Stevens-Johnson syndrome, rash, fever, photosensitivity",
+      "alternatives": "Non-sulfa antibiotics (Azithromycin, Doxycycline, Fluoroquinolones)",
+      "recommendation": "CONTRAINDICATED - Avoid all sulfonamide antibiotics. Monitor for cross-reactions with sulfa-containing diuretics."
+    },
+    {
+      "allergen": "nsaid",
+      "relatedDrugs": ["ibuprofen", "diclofenac", "naproxen", "aspirin", "brufen", "voveran", "combiflam", "ketorolac"],
+      "crossReactions": ["all nsaids", "cox-2 inhibitors"],
+      "severity": "moderate",
+      "symptoms": "Asthma exacerbation, urticaria, angioedema, anaphylaxis",
+      "alternatives": "Paracetamol/Acetaminophen, COX-2 selective inhibitors (with caution)",
+      "recommendation": "Avoid all NSAIDs. Paracetamol is safe alternative. COX-2 inhibitors may be used with caution under supervision."
+    },
+    {
+      "allergen": "aspirin",
+      "relatedDrugs": ["aspirin", "acetylsalicylic acid", "disprin", "ecosprin"],
+      "crossReactions": ["nsaids", "ibuprofen", "diclofenac"],
+      "severity": "moderate",
+      "symptoms": "Asthma, rhinitis, urticaria, angioedema",
+      "alternatives": "Paracetamol, Clopidogrel (for antiplatelet therapy)",
+      "recommendation": "Avoid aspirin and use NSAIDs with extreme caution. Paracetamol is safe for pain/fever."
+    },
+    {
+      "allergen": "paracetamol",
+      "relatedDrugs": ["paracetamol", "acetaminophen", "crocin", "dolo", "calpol", "tylenol"],
+      "crossReactions": [],
+      "severity": "moderate",
+      "symptoms": "Rash, angioedema, rarely anaphylaxis",
+      "alternatives": "NSAIDs (if no NSAID allergy), COX-2 inhibitors",
+      "recommendation": "Avoid paracetamol. NSAIDs can be used if no contraindication."
+    },
+    {
+      "allergen": "cephalosporin",
+      "relatedDrugs": ["cefixime", "ceftriaxone", "cephalexin", "cefuroxime", "cefpodoxime"],
+      "crossReactions": ["penicillin"],
+      "severity": "high",
+      "symptoms": "Rash, hives, anaphylaxis",
+      "alternatives": "Azithromycin, Fluoroquinolones, Doxycycline",
+      "recommendation": "Avoid all cephalosporins. 10% cross-reactivity with penicillin - use caution if penicillin allergy."
+    },
+    {
+      "allergen": "fluoroquinolone",
+      "relatedDrugs": ["ciprofloxacin", "levofloxacin", "moxifloxacin", "ofloxacin", "cipro", "ciplox"],
+      "crossReactions": [],
+      "severity": "moderate",
+      "symptoms": "Tendon rupture, QT prolongation, photosensitivity, rash",
+      "alternatives": "Azithromycin, Doxycycline, Beta-lactams (if no allergy)",
+      "recommendation": "Avoid all fluoroquinolones. Use alternative antibiotics based on infection type."
+    },
+    {
+      "allergen": "macrolide",
+      "relatedDrugs": ["azithromycin", "clarithromycin", "erythromycin", "azithral", "azee"],
+      "crossReactions": [],
+      "severity": "moderate",
+      "symptoms": "Rash, GI upset, QT prolongation",
+      "alternatives": "Doxycycline, Fluoroquinolones, Beta-lactams",
+      "recommendation": "Avoid all macrolide antibiotics. Consider alternative antibiotic classes."
+    },
+    {
+      "allergen": "tetracycline",
+      "relatedDrugs": ["doxycycline", "tetracycline", "minocycline"],
+      "crossReactions": [],
+      "severity": "low",
+      "symptoms": "Photosensitivity, GI upset, rash",
+      "alternatives": "Azithromycin, Fluoroquinolones, Beta-lactams",
+      "recommendation": "Avoid tetracyclines. Multiple alternative antibiotics available."
+    },
+    {
+      "allergen": "statin",
+      "relatedDrugs": ["atorvastatin", "simvastatin", "rosuvastatin", "pravastatin", "lipitor", "crestor"],
+      "crossReactions": [],
+      "severity": "moderate",
+      "symptoms": "Muscle pain, rhabdomyolysis, liver enzyme elevation",
+      "alternatives": "Ezetimibe, PCSK9 inhibitors, Fibrates",
+      "recommendation": "Avoid all statins. Consider alternative lipid-lowering agents."
+    },
+    {
+      "allergen": "ace-inhibitor",
+      "relatedDrugs": ["lisinopril", "enalapril", "ramipril", "perindopril"],
+      "crossReactions": [],
+      "severity": "moderate",
+      "symptoms": "Angioedema, dry cough, hyperkalemia",
+      "alternatives": "ARBs (Losartan, Telmisartan), Calcium channel blockers",
+      "recommendation": "Avoid all ACE inhibitors. ARBs are safe alternatives with lower angioedema risk."
+    },
+    {
+      "allergen": "beta-blocker",
+      "relatedDrugs": ["metoprolol", "atenolol", "propranolol", "carvedilol"],
+      "crossReactions": [],
+      "severity": "moderate",
+      "symptoms": "Bronchospasm, bradycardia, fatigue",
+      "alternatives": "Calcium channel blockers, ACE inhibitors/ARBs",
+      "recommendation": "Avoid beta-blockers especially in asthma/COPD. Use alternative antihypertensives."
+    },
+    {
+      "allergen": "local-anesthetic",
+      "relatedDrugs": ["lidocaine", "lignocaine", "bupivacaine", "xylocaine"],
+      "crossReactions": [],
+      "severity": "moderate",
+      "symptoms": "Rash, swelling, anaphylaxis",
+      "alternatives": "Different class local anesthetics, General anesthesia",
+      "recommendation": "Document specific local anesthetic allergy. Alternative agents available."
+    },
+    {
+      "allergen": "opioid",
+      "relatedDrugs": ["morphine", "codeine", "tramadol", "oxycodone", "hydrocodone"],
+      "crossReactions": [],
+      "severity": "moderate",
+      "symptoms": "Itching, rash, respiratory depression, anaphylaxis",
+      "alternatives": "Non-opioid analgesics, Different opioid class",
+      "recommendation": "Avoid specific opioid. May try different opioid class with caution."
+    },
+    {
+      "allergen": "contrast-dye",
+      "relatedDrugs": ["iodinated contrast", "gadolinium"],
+      "crossReactions": [],
+      "severity": "high",
+      "symptoms": "Anaphylaxis, nephrotoxicity, thyroid dysfunction",
+      "alternatives": "Non-contrast imaging, Premedication protocol",
+      "recommendation": "Use non-contrast imaging when possible. If essential, use premedication protocol."
+    }
+  ],
+  "allergyAliases": {
+    "penicillin": ["penicillin", "pcn", "pen", "amoxicillin", "amoxil", "augmentin"],
+    "sulfa": ["sulfa", "sulfonamide", "sulfamethoxazole", "bactrim", "septran"],
+    "nsaid": ["nsaid", "nsaids", "ibuprofen", "diclofenac", "brufen", "voveran"],
+    "aspirin": ["aspirin", "asa", "disprin", "ecosprin"],
+    "paracetamol": ["paracetamol", "acetaminophen", "tylenol", "crocin", "dolo"],
+    "cephalosporin": ["cephalosporin", "ceph", "cefixime", "ceftriaxone"],
+    "fluoroquinolone": ["fluoroquinolone", "quinolone", "cipro", "levofloxacin"],
+    "macrolide": ["macrolide", "azithromycin", "clarithromycin", "erythromycin"],
+    "tetracycline": ["tetracycline", "doxycycline", "doxy"],
+    "statin": ["statin", "atorvastatin", "simvastatin", "lipitor"],
+    "ace-inhibitor": ["ace inhibitor", "ace-inhibitor", "lisinopril", "enalapril"],
+    "beta-blocker": ["beta blocker", "beta-blocker", "metoprolol", "atenolol"],
+    "local-anesthetic": ["local anesthetic", "lidocaine", "lignocaine", "xylocaine"],
+    "opioid": ["opioid", "morphine", "codeine", "tramadol"],
+    "contrast-dye": ["contrast", "contrast dye", "iodine", "gadolinium"]
+  }
+}
