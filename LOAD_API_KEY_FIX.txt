@@ -1,0 +1,17 @@
+INSTRUCTIONS TO FIX THE ERROR:
+================================
+
+Add this line to index.html in the BUG FIXES section:
+
+BEFORE (current):
+    <!-- BUG FIXES -->
+    <script src="branding-modal-fix.js"></script>
+
+AFTER (fixed):
+    <!-- BUG FIXES -->
+    <script src="branding-modal-fix.js"></script>
+    <script src="api-key-check-fix.js"></script>
+
+This will fix the error: "Failed to verify API key: Cannot read properties of null (reading 'style')"
+
+The api-key-check-fix.js file has been updated with proper null checks.
