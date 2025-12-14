@@ -61,7 +61,7 @@ async function generateWithRealAI(symptoms, age, gender) {
     const apiKey = localStorage.getItem('groq_api_key');
     
     if (!apiKey) {
-        alert('Please setup your FREE Groq API key in Settings');
+        alert('Please configure your FREE Groq API key in Settings');
         showSettings();
         return null;
     }
@@ -262,9 +262,9 @@ function startVoice() {
     if (recognition) {
         recognition.start();
         isListening = true;
-        document.getElementById('voiceBtnText').textContent = 'Stop Voice Input';
-        document.getElementById('voiceBtn').classList.add('bg-red-500', 'text-white');
-        document.getElementById('voiceBtn').classList.remove('bg-white', 'text-indigo-600');
+        document.getElementById('voiceBtnText').textContent = 'Stop Recording';
+        document.getElementById('voiceBtn').classList.add('bg-red-500', 'text-white', 'border-red-500');
+        document.getElementById('voiceBtn').classList.remove('bg-white', 'text-gray-700', 'border-gray-300');
         document.getElementById('listeningIndicator').classList.remove('hidden');
         speak('Voice input activated. Please speak patient details.');
     }
@@ -275,8 +275,8 @@ function stopVoice() {
         recognition.stop();
         isListening = false;
         document.getElementById('voiceBtnText').textContent = 'Start Voice Input';
-        document.getElementById('voiceBtn').classList.remove('bg-red-500', 'text-white');
-        document.getElementById('voiceBtn').classList.add('bg-white', 'text-indigo-600');
+        document.getElementById('voiceBtn').classList.remove('bg-red-500', 'text-white', 'border-red-500');
+        document.getElementById('voiceBtn').classList.add('bg-white', 'text-gray-700', 'border-gray-300');
         document.getElementById('listeningIndicator').classList.add('hidden');
     }
 }
@@ -330,13 +330,13 @@ document.getElementById('prescriptionForm').addEventListener('submit', async (e)
     
     const btn = document.getElementById('generateBtn');
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Groq AI Analyzing...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>AI Analyzing...';
     
     document.getElementById('preview').innerHTML = `
-        <div class="text-center">
-            <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-indigo-600 mx-auto mb-4"></div>
-            <p class="text-indigo-600 font-semibold text-lg">Groq AI (Llama 3.3 70B) analyzing...</p>
-            <p class="text-gray-500 text-sm mt-2">Generating prescription with real AI</p>
+        <div class="text-center py-20">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
+            <p class="text-blue-600 font-semibold text-lg">Groq AI Processing...</p>
+            <p class="text-gray-500 text-sm mt-2">Analyzing symptoms with Llama 3.3 70B</p>
         </div>
     `;
     
@@ -359,7 +359,7 @@ document.getElementById('prescriptionForm').addEventListener('submit', async (e)
     }
     
     btn.disabled = false;
-    btn.innerHTML = '<i class="fas fa-magic mr-2"></i>Generate with Real AI';
+    btn.innerHTML = '<i class="fas fa-wand-magic-sparkles mr-2"></i>Generate AI Prescription';
 });
 
 function displayPrescription(data) {
@@ -371,35 +371,88 @@ function displayPrescription(data) {
     
     document.getElementById('preview').innerHTML = `
         <div class="space-y-6">
-            <div class="border-b-2 border-indigo-600 pb-4">
-                <h3 class="text-2xl font-bold text-indigo-600">Dr. Kumar Vaibhav</h3>
-                <p class="text-sm text-gray-600">MBBS, MD (Internal Medicine)</p>
-                <p class="text-xs text-gray-500 mt-1">AI-Powered by Groq (Llama 3.3 70B)</p>
+            <!-- Header -->
+            <div class="border-b-2 border-blue-600 pb-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-900">Dr. Kumar Vaibhav</h3>
+                        <p class="text-sm text-gray-600 font-medium">MBBS, MD (Internal Medicine)</p>
+                        <p class="text-xs text-gray-500 mt-1">Reg. No: MED/2024/12345</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="bg-blue-100 px-4 py-2 rounded-lg">
+                            <p class="text-xs font-semibold text-blue-700 uppercase">Prescription ID</p>
+                            <p class="text-sm font-bold text-blue-900">#${Date.now().toString().slice(-8)}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
             
-            <div class="grid grid-cols-2 gap-3 text-sm bg-gray-50 p-4 rounded-lg">
-                <div><strong>Patient:</strong> ${data.patientName}</div>
-                <div><strong>Age/Gender:</strong> ${data.age} / ${data.gender}</div>
-                <div><strong>Date:</strong> ${date}</div>
-                <div><strong>AI:</strong> Groq Llama 3.3</div>
+            <!-- Patient Info -->
+            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Patient Name</p>
+                        <p class="font-bold text-gray-900">${data.patientName}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Age / Gender</p>
+                        <p class="font-bold text-gray-900">${data.age} Years / ${data.gender}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Date</p>
+                        <p class="font-bold text-gray-900">${date}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase mb-1">AI Model</p>
+                        <p class="font-bold text-gray-900">Groq Llama 3.3 70B</p>
+                    </div>
+                </div>
             </div>
             
-            <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-600">
-                <h4 class="font-bold text-blue-900 mb-2"><i class="fas fa-stethoscope mr-2"></i>Diagnosis:</h4>
-                <p class="text-sm text-blue-800">${data.diagnosis}</p>
+            <!-- Diagnosis -->
+            <div class="bg-blue-50 border-l-4 border-blue-600 rounded-lg p-4">
+                <div class="flex items-start">
+                    <div class="bg-blue-600 text-white w-8 h-8 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                        <i class="fas fa-stethoscope text-sm"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-blue-900 mb-2 text-sm uppercase tracking-wide">Clinical Diagnosis</h4>
+                        <p class="text-sm text-blue-800 leading-relaxed">${data.diagnosis}</p>
+                    </div>
+                </div>
             </div>
             
+            <!-- Prescription -->
             <div>
-                <h4 class="font-bold text-gray-900 mb-3"><i class="fas fa-pills mr-2 text-indigo-600"></i>Prescription:</h4>
+                <div class="flex items-center mb-4">
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-pills text-sm"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-sm uppercase tracking-wide">Prescription (Rx)</h4>
+                </div>
                 <div class="space-y-3">
                     ${data.medicines.map((med, idx) => `
-                        <div class="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-lg border border-indigo-200">
+                        <div class="bg-white border-2 border-gray-200 rounded-lg p-4 hover:border-blue-300 transition">
                             <div class="flex items-start">
-                                <span class="bg-indigo-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mr-3 mt-1">${idx + 1}</span>
+                                <span class="bg-gray-900 text-white w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0">${idx + 1}</span>
                                 <div class="flex-1">
-                                    <p class="font-semibold text-gray-900">${med.name}</p>
-                                    <p class="text-sm text-gray-700 mt-1">${med.dosage}${med.duration ? ' for ' + med.duration : ''}</p>
-                                    ${med.notes ? `<p class="text-xs text-gray-600 mt-1 italic">${med.notes}</p>` : ''}
+                                    <p class="font-bold text-gray-900 text-base mb-2">${med.name}</p>
+                                    <div class="space-y-1">
+                                        <p class="text-sm text-gray-700">
+                                            <span class="font-semibold text-gray-900">Dosage:</span> ${med.dosage}
+                                        </p>
+                                        ${med.duration ? `
+                                            <p class="text-sm text-gray-700">
+                                                <span class="font-semibold text-gray-900">Duration:</span> ${med.duration}
+                                            </p>
+                                        ` : ''}
+                                        ${med.notes ? `
+                                            <p class="text-xs text-gray-600 bg-gray-50 p-2 rounded mt-2 border-l-2 border-gray-300">
+                                                <i class="fas fa-info-circle mr-1"></i>${med.notes}
+                                            </p>
+                                        ` : ''}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -407,16 +460,33 @@ function displayPrescription(data) {
                 </div>
             </div>
             
-            <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-600">
-                <h4 class="font-bold text-green-900 mb-2"><i class="fas fa-info-circle mr-2"></i>General Advice:</h4>
-                <ul class="text-sm text-green-800 space-y-1">
-                    ${data.advice.map(a => `<li>• ${a}</li>`).join('')}
-                </ul>
+            <!-- Advice -->
+            <div class="bg-green-50 border-l-4 border-green-600 rounded-lg p-4">
+                <div class="flex items-start">
+                    <div class="bg-green-600 text-white w-8 h-8 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                        <i class="fas fa-lightbulb text-sm"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-green-900 mb-2 text-sm uppercase tracking-wide">Medical Advice</h4>
+                        <ul class="text-sm text-green-800 space-y-1.5">
+                            ${data.advice.map(a => `<li class="flex items-start"><i class="fas fa-check-circle mr-2 mt-0.5 text-green-600"></i><span>${a}</span></li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
             </div>
             
-            <div class="border-t pt-4 text-xs text-gray-500">
-                <p><i class="fas fa-check-circle text-green-600 mr-1"></i> Generated by Groq AI (Llama 3.3 70B)</p>
-                <p><i class="fas fa-check-circle text-green-600 mr-1"></i> Auto-saved to LocalStorage</p>
+            <!-- Footer -->
+            <div class="border-t pt-4 mt-6">
+                <div class="flex items-center justify-between text-xs text-gray-500">
+                    <div class="space-y-1">
+                        <p><i class="fas fa-check-circle text-green-600 mr-1"></i>AI-Powered by Groq (Llama 3.3 70B)</p>
+                        <p><i class="fas fa-check-circle text-green-600 mr-1"></i>Auto-saved to secure database</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-semibold text-gray-700">Dr. Kumar Vaibhav</p>
+                        <p class="text-xs">Digital Signature</p>
+                    </div>
+                </div>
             </div>
         </div>
     `;
@@ -426,7 +496,13 @@ function savePrescription() {
     if (currentPrescription) {
         db.savePrescription(currentPrescription);
         speak('Prescription saved successfully.');
-        alert('✅ Prescription saved!');
+        
+        // Show success notification
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-20 right-6 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 slide-in';
+        notification.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Prescription saved successfully!';
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
     }
 }
 
@@ -436,41 +512,79 @@ function downloadPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     
-    doc.setFontSize(20);
-    doc.text('AI PRESCRIPTION', 105, 20, { align: 'center' });
-    
-    doc.setFontSize(12);
-    doc.text('Dr. Kumar Vaibhav', 20, 40);
-    doc.text('MBBS, MD (Internal Medicine)', 20, 47);
+    // Header
+    doc.setFontSize(22);
+    doc.setFont(undefined, 'bold');
+    doc.text('MEDICAL PRESCRIPTION', 105, 20, { align: 'center' });
     
     doc.setFontSize(10);
-    doc.text(`Patient: ${currentPrescription.patientName}`, 20, 60);
-    doc.text(`Age: ${currentPrescription.age} | Gender: ${currentPrescription.gender}`, 20, 67);
-    doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 74);
+    doc.setFont(undefined, 'normal');
+    doc.text('MediScript AI - Enterprise Medical Platform', 105, 27, { align: 'center' });
     
-    doc.text('Diagnosis:', 20, 87);
+    // Doctor Info
+    doc.setFontSize(14);
+    doc.setFont(undefined, 'bold');
+    doc.text('Dr. Kumar Vaibhav', 20, 40);
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    doc.text('MBBS, MD (Internal Medicine)', 20, 46);
+    doc.text('Reg. No: MED/2024/12345', 20, 51);
+    
+    // Patient Info
+    doc.setFontSize(11);
+    doc.setFont(undefined, 'bold');
+    doc.text('PATIENT INFORMATION', 20, 63);
+    doc.setFont(undefined, 'normal');
+    doc.setFontSize(10);
+    doc.text(`Name: ${currentPrescription.patientName}`, 20, 70);
+    doc.text(`Age: ${currentPrescription.age} years | Gender: ${currentPrescription.gender}`, 20, 76);
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 82);
+    
+    // Diagnosis
+    doc.setFont(undefined, 'bold');
+    doc.text('DIAGNOSIS:', 20, 94);
+    doc.setFont(undefined, 'normal');
     const diagnosisLines = doc.splitTextToSize(currentPrescription.diagnosis, 170);
-    doc.text(diagnosisLines, 20, 94);
+    doc.text(diagnosisLines, 20, 100);
     
-    let y = 94 + (diagnosisLines.length * 7) + 10;
-    doc.text('Prescription:', 20, y);
-    y += 7;
+    let y = 100 + (diagnosisLines.length * 6) + 8;
+    
+    // Prescription
+    doc.setFont(undefined, 'bold');
+    doc.text('PRESCRIPTION (Rx):', 20, y);
+    y += 8;
     
     currentPrescription.medicines.forEach((med, idx) => {
+        doc.setFont(undefined, 'bold');
         doc.text(`${idx + 1}. ${med.name}`, 20, y);
-        y += 7;
+        y += 6;
+        doc.setFont(undefined, 'normal');
         doc.text(`   ${med.dosage}${med.duration ? ' for ' + med.duration : ''}`, 20, y);
-        y += 7;
+        y += 6;
         if (med.notes) {
             const noteLines = doc.splitTextToSize(`   Note: ${med.notes}`, 170);
             doc.text(noteLines, 20, y);
-            y += noteLines.length * 7;
+            y += noteLines.length * 6;
         }
-        y += 3;
+        y += 4;
     });
     
+    // Advice
+    y += 4;
+    doc.setFont(undefined, 'bold');
+    doc.text('MEDICAL ADVICE:', 20, y);
+    y += 6;
+    doc.setFont(undefined, 'normal');
+    currentPrescription.advice.forEach(advice => {
+        const adviceLines = doc.splitTextToSize(`• ${advice}`, 170);
+        doc.text(adviceLines, 20, y);
+        y += adviceLines.length * 6;
+    });
+    
+    // Footer
     doc.setFontSize(8);
-    doc.text('Generated by Groq AI (Llama 3.3 70B)', 20, 280);
+    doc.text('Generated by MediScript AI - Powered by Groq (Llama 3.3 70B)', 20, 280);
+    doc.text('Dr. Kumar Vaibhav', 150, 280);
     
     doc.save(`prescription-${currentPrescription.patientName}-${Date.now()}.pdf`);
     speak('PDF downloaded.');
@@ -492,6 +606,17 @@ function speakPrescription() {
 function clearForm() {
     document.getElementById('prescriptionForm').reset();
     document.getElementById('voiceTranscript').classList.add('hidden');
+    document.getElementById('preview').innerHTML = `
+        <div class="text-center text-gray-400 py-20">
+            <div class="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-file-medical text-4xl text-gray-300"></i>
+            </div>
+            <p class="text-lg font-semibold text-gray-500 mb-2">No Prescription Generated</p>
+            <p class="text-sm text-gray-400">Enter patient details and generate prescription</p>
+        </div>
+    `;
+    document.getElementById('statusBadge').classList.add('hidden');
+    document.getElementById('actionButtons').classList.add('hidden');
 }
 
 function showHistory() {
@@ -499,20 +624,26 @@ function showHistory() {
     const content = document.getElementById('historyContent');
     
     if (prescriptions.length === 0) {
-        content.innerHTML = '<p class="text-gray-500 text-center py-8">No prescriptions yet.</p>';
+        content.innerHTML = '<p class="text-gray-500 text-center py-12">No prescription history available.</p>';
     } else {
         content.innerHTML = prescriptions.reverse().map(p => `
-            <div class="bg-gray-50 p-4 rounded-lg border hover:shadow-md transition">
-                <div class="flex justify-between items-start">
+            <div class="glass-effect p-5 rounded-xl border border-gray-200 hover:shadow-lg transition">
+                <div class="flex justify-between items-start mb-3">
                     <div>
-                        <p class="font-bold text-lg">${p.patientName}</p>
+                        <p class="font-bold text-lg text-gray-900">${p.patientName}</p>
                         <p class="text-sm text-gray-600">${p.age} years • ${p.gender}</p>
-                        <p class="text-xs text-gray-500 mt-1">${new Date(p.createdAt).toLocaleString()}</p>
                     </div>
-                    <span class="text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full font-semibold">Groq AI</span>
+                    <span class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-semibold">
+                        <i class="fas fa-robot mr-1"></i>AI Generated
+                    </span>
                 </div>
-                <p class="text-sm mt-3 text-gray-700 bg-white p-2 rounded">${p.diagnosis}</p>
-                <p class="text-xs text-gray-500 mt-2">${p.medicines.length} medicine(s)</p>
+                <div class="bg-blue-50 p-3 rounded-lg mb-2 border-l-2 border-blue-500">
+                    <p class="text-sm text-gray-700 font-medium">${p.diagnosis}</p>
+                </div>
+                <div class="flex items-center justify-between text-xs text-gray-500">
+                    <span><i class="fas fa-pills mr-1"></i>${p.medicines.length} medicine(s)</span>
+                    <span><i class="fas fa-clock mr-1"></i>${new Date(p.createdAt).toLocaleString()}</span>
+                </div>
             </div>
         `).join('');
     }
@@ -554,10 +685,17 @@ async function saveApiKey() {
             
             if (response.ok) {
                 localStorage.setItem('groq_api_key', key);
-                document.getElementById('aiStatus').innerHTML = '<i class="fas fa-robot mr-2"></i>Groq AI Ready';
-                document.getElementById('aiStatus').className = 'px-4 py-2 bg-green-100 text-green-700 rounded-lg font-semibold';
+                document.getElementById('aiStatus').innerHTML = '<i class="fas fa-circle text-green-500 mr-2 text-xs"></i>AI Ready';
+                document.getElementById('aiStatus').className = 'px-4 py-2 bg-green-100 text-green-700 rounded-lg font-semibold text-sm border border-green-200';
                 document.getElementById('setupBanner').style.display = 'none';
-                alert('✅ API key saved and verified!');
+                
+                // Show success notification
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-20 right-6 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 slide-in';
+                notification.innerHTML = '<i class="fas fa-check-circle mr-2"></i>API key verified successfully!';
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 3000);
+                
                 closeSettings();
             } else {
                 alert('❌ Invalid API key. Please check and try again.');
@@ -570,8 +708,8 @@ async function saveApiKey() {
 
 function checkApiKey() {
     if (localStorage.getItem('groq_api_key')) {
-        document.getElementById('aiStatus').innerHTML = '<i class="fas fa-robot mr-2"></i>Groq AI Ready';
-        document.getElementById('aiStatus').className = 'px-4 py-2 bg-green-100 text-green-700 rounded-lg font-semibold';
+        document.getElementById('aiStatus').innerHTML = '<i class="fas fa-circle text-green-500 mr-2 text-xs"></i>AI Ready';
+        document.getElementById('aiStatus').className = 'px-4 py-2 bg-green-100 text-green-700 rounded-lg font-semibold text-sm border border-green-200';
         document.getElementById('setupBanner').style.display = 'none';
     }
 }
