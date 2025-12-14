@@ -204,128 +204,211 @@
 
         <!-- Main Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Input Form -->
-            <div class="glass-effect rounded-2xl p-6 card-shadow-lg border border-gray-200">
+            
+            <!-- Left Column - Input Form -->
+            <div class="glass-effect rounded-xl p-8 card-shadow-lg border border-gray-200">
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-xl font-bold text-gray-900">
-                        <i class="fas fa-user-md text-blue-600 mr-2"></i>
-                        Patient Information
-                    </h2>
-                    <div class="flex items-center space-x-3">
-                        <button id="templatesBtn" type="button" class="text-sm text-blue-600 hover:text-blue-800 font-semibold flex items-center space-x-1">
-                            <i class="fas fa-file-medical mr-1"></i>Templates
-                        </button>
-                        <button onclick="clearForm()" class="text-sm text-gray-600 hover:text-gray-800 font-semibold">
-                            <i class="fas fa-redo mr-1"></i>Reset
+                    <h2 class="text-2xl font-bold text-gray-900">Patient Information</h2>
+                    <button onclick="showTemplates()" class="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg font-semibold text-sm hover:from-purple-700 hover:to-purple-800 transition">
+                        <i class="fas fa-file-medical mr-2"></i>Templates
+                    </button>
+                </div>
+
+                <form id="prescriptionForm" class="space-y-6">
+                    <!-- Patient Name -->
+                    <div class="voice-input-wrapper">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Patient Name <span class="text-red-500">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="patientName" 
+                            class="input-field input-with-voice w-full px-4 py-3 rounded-lg text-gray-900 font-medium"
+                            placeholder="Enter patient name"
+                            required
+                        >
+                        <button type="button" class="voice-btn" onclick="startFieldVoice('patientName', 2000)">
+                            <i class="fas fa-microphone text-gray-600"></i>
                         </button>
                     </div>
-                </div>
-                
-                <form id="prescriptionForm" onsubmit="generatePrescription(event)" class="space-y-4">
-                    <!-- Patient Name with Voice -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Patient Full Name
-                            <span class="text-xs text-gray-500 ml-1">(🎤 Click to speak)</span>
-                        </label>
+
+                    <!-- Age & Gender -->
+                    <div class="grid grid-cols-2 gap-4">
                         <div class="voice-input-wrapper">
-                            <input type="text" id="patientName" required 
-                                   class="w-full px-4 py-3 rounded-lg input-field input-with-voice" 
-                                   placeholder="Enter or speak patient name">
-                            <button type="button" class="voice-btn" onclick="startFieldVoice('patientName')" title="Click to speak name">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Age (Years) <span class="text-red-500">*</span>
+                            </label>
+                            <input 
+                                type="number" 
+                                id="patientAge" 
+                                class="input-field input-with-voice w-full px-4 py-3 rounded-lg text-gray-900 font-medium"
+                                placeholder="Age"
+                                min="0"
+                                max="150"
+                                required
+                            >
+                            <button type="button" class="voice-btn" onclick="startFieldVoice('patientAge', 2000)">
                                 <i class="fas fa-microphone text-gray-600"></i>
                             </button>
                         </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-4">
-                        <!-- Age with Voice -->
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                Age (Years)
-                                <span class="text-xs text-gray-500 ml-1">(🎤)</span>
+                                Gender <span class="text-red-500">*</span>
                             </label>
-                            <div class="voice-input-wrapper">
-                                <input type="number" id="patientAge" required 
-                                       class="w-full px-4 py-3 rounded-lg input-field input-with-voice" 
-                                       placeholder="Age">
-                                <button type="button" class="voice-btn" onclick="startFieldVoice('patientAge')" title="Click to speak age">
-                                    <i class="fas fa-microphone text-gray-600"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Gender</label>
-                            <select id="gender" required class="w-full px-4 py-3 rounded-lg input-field">
+                            <select 
+                                id="patientGender" 
+                                class="input-field w-full px-4 py-3 rounded-lg text-gray-900 font-medium"
+                                required
+                            >
+                                <option value="">Select</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                                 <option value="Other">Other</option>
                             </select>
                         </div>
                     </div>
-                    
-                    <!-- Symptoms with Voice -->
-                    <div>
+
+                    <!-- Clinical Symptoms -->
+                    <div class="voice-input-wrapper">
                         <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Clinical Symptoms & Complaints
-                            <span class="text-xs text-gray-500 ml-2">(Click 🎤 to speak)</span>
+                            Clinical Symptoms & Complaints <span class="text-red-500">*</span>
+                            <span class="text-xs text-gray-500 font-normal ml-2">(Click 🎤 to speak)</span>
                         </label>
-                        <div class="voice-input-wrapper">
-                            <textarea id="symptoms" required rows="4" 
-                                      class="w-full px-4 py-3 rounded-lg input-field input-with-voice" 
-                                      placeholder="Describe symptoms or click microphone to speak..."></textarea>
-                            <button type="button" class="voice-btn voice-btn-textarea" onclick="startFieldVoice('symptoms')" title="Click to speak symptoms">
-                                <i class="fas fa-microphone text-gray-600"></i>
-                            </button>
-                        </div>
+                        <textarea 
+                            id="symptoms" 
+                            class="input-field input-with-voice w-full px-4 py-3 rounded-lg text-gray-900 font-medium resize-none"
+                            rows="4"
+                            placeholder="Describe symptoms, complaints, and clinical findings..."
+                            required
+                        ></textarea>
+                        <button type="button" class="voice-btn voice-btn-textarea" onclick="startFieldVoice('symptoms', 5000)">
+                            <i class="fas fa-microphone text-gray-600"></i>
+                        </button>
                     </div>
 
-                    <!-- Voice Status Indicator -->
-                    <div id="voiceStatus" class="hidden p-3 bg-red-50 border-l-4 border-red-500 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fas fa-microphone-slash text-red-600 mr-2"></i>
-                            <p class="text-sm text-red-700 font-semibold">Listening...</p>
-                        </div>
+                    <!-- Action Buttons -->
+                    <div class="flex space-x-4">
+                        <button 
+                            type="button" 
+                            onclick="generatePrescription()" 
+                            class="flex-1 btn-primary text-white px-6 py-4 rounded-lg font-bold text-base shadow-lg"
+                        >
+                            <i class="fas fa-magic mr-2"></i>Generate AI Prescription
+                        </button>
+                        <button 
+                            type="button" 
+                            onclick="clearForm()" 
+                            class="px-6 py-4 bg-gray-200 text-gray-700 rounded-lg font-bold text-base hover:bg-gray-300 transition"
+                        >
+                            <i class="fas fa-redo mr-2"></i>Reset
+                        </button>
                     </div>
-                    
-                    <button type="submit" class="w-full px-6 py-4 btn-primary text-white rounded-lg font-bold text-lg">
-                        <i class="fas fa-magic mr-2"></i>Generate AI Prescription
-                    </button>
                 </form>
             </div>
 
-            <!-- Prescription Preview -->
-            <div class="glass-effect rounded-2xl p-6 card-shadow-lg border border-gray-200">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-xl font-bold text-gray-900">
-                        <i class="fas fa-file-prescription text-blue-600 mr-2"></i>
-                        Prescription Preview
-                    </h2>
-                    <div id="statusBadge" class="hidden px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold border border-green-200">
-                        <i class="fas fa-check-circle mr-1"></i>Generated
-                    </div>
-                </div>
+            <!-- Right Column - Prescription Preview -->
+            <div class="glass-effect rounded-xl p-8 card-shadow-lg border border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Prescription Preview</h2>
                 
-                <div id="preview" class="min-h-[400px] bg-gray-50 rounded-lg p-6 border-2 border-dashed border-gray-300">
-                    <div class="flex flex-col items-center justify-center h-full text-center">
-                        <div class="bg-gray-200 w-20 h-20 rounded-full flex items-center justify-center mb-4">
-                            <i class="fas fa-file-medical text-gray-400 text-3xl"></i>
-                        </div>
-                        <p class="text-lg font-semibold text-gray-500 mb-2">No Prescription Generated</p>
-                        <p class="text-sm text-gray-400">Enter patient details and generate prescription</p>
+                <div id="prescriptionPreview" class="bg-white rounded-lg p-6 border-2 border-gray-200 min-h-[500px]">
+                    <div class="flex flex-col items-center justify-center h-full text-gray-400">
+                        <i class="fas fa-file-prescription text-6xl mb-4"></i>
+                        <p class="text-lg font-semibold">No Prescription Generated</p>
+                        <p class="text-sm">Enter patient details and click "Generate AI Prescription"</p>
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
-                <div id="actionButtons" class="hidden mt-6 grid grid-cols-4 gap-3">
+                <!-- Action Buttons (Hidden by default) -->
+                <div id="prescriptionActions" class="hidden mt-6 grid grid-cols-3 gap-4">
                     <button onclick="savePrescription()" class="px-4 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition">
                         <i class="fas fa-save mr-2"></i>Save
                     </button>
                     <button onclick="downloadPDF()" class="px-4 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition">
                         <i class="fas fa-file-pdf mr-2"></i>PDF
                     </button>
-                    <button onclick="speakPrescription()" class="px-4 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition">
+                    <button onclick="readPrescription()" class="px-4 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition">
                         <i class="fas fa-volume-up mr-2"></i>Read
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="glass-effect rounded-xl max-w-2xl w-full p-8 card-shadow-lg border border-gray-200 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Settings</h2>
+                <button onclick="closeSettings()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- API Configuration -->
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">API Configuration</h3>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Groq API Key <span class="text-red-500">*</span>
+                        </label>
+                        <input 
+                            type="password" 
+                            id="apiKey" 
+                            class="input-field w-full px-4 py-3 rounded-lg text-gray-900 font-medium"
+                            placeholder="Enter your Groq API key"
+                        >
+                        <p class="text-xs text-gray-500 mt-2">
+                            Get your free API key from <a href="https://console.groq.com" target="_blank" class="text-blue-600 hover:underline">console.groq.com</a>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Clinic Branding -->
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Clinic Branding</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Clinic Name</label>
+                            <input type="text" id="brandingClinicName" class="input-field w-full px-4 py-3 rounded-lg" placeholder="MediScript AI">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Tagline</label>
+                            <input type="text" id="brandingTagline" class="input-field w-full px-4 py-3 rounded-lg" placeholder="Enterprise Medical Platform">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Doctor Name</label>
+                            <input type="text" id="brandingDoctorName" class="input-field w-full px-4 py-3 rounded-lg" placeholder="Dr. John Doe">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Credentials</label>
+                            <input type="text" id="brandingCredentials" class="input-field w-full px-4 py-3 rounded-lg" placeholder="MBBS, MD">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Registration Number</label>
+                            <input type="text" id="brandingRegNumber" class="input-field w-full px-4 py-3 rounded-lg" placeholder="MCI-12345">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Phone</label>
+                            <input type="text" id="brandingPhone" class="input-field w-full px-4 py-3 rounded-lg" placeholder="+1 234 567 8900">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+                            <input type="email" id="brandingEmail" class="input-field w-full px-4 py-3 rounded-lg" placeholder="doctor@clinic.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Address</label>
+                            <input type="text" id="brandingAddress" class="input-field w-full px-4 py-3 rounded-lg" placeholder="123 Medical St">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex space-x-4">
+                    <button onclick="saveSettings()" class="flex-1 btn-primary text-white px-6 py-3 rounded-lg font-bold">
+                        <i class="fas fa-save mr-2"></i>Save Settings
+                    </button>
+                    <button onclick="closeSettings()" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-bold hover:bg-gray-300 transition">
+                        Cancel
                     </button>
                 </div>
             </div>
@@ -334,96 +417,19 @@
 
     <!-- History Modal -->
     <div id="historyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-        <div class="glass-effect rounded-2xl max-w-4xl w-full max-h-[80vh] overflow-hidden">
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-bold text-gray-900">Prescription History</h3>
-                    <button onclick="closeHistory()" class="text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-times text-2xl"></i>
-                    </button>
-                </div>
+        <div class="glass-effect rounded-xl max-w-4xl w-full p-8 card-shadow-lg border border-gray-200 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Prescription History</h2>
+                <button onclick="closeHistory()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
             </div>
-            <div id="historyContent" class="p-6 overflow-y-auto max-h-[60vh] space-y-4"></div>
-        </div>
-    </div>
 
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-        <div class="glass-effect rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-bold text-gray-900">Settings</h3>
-                    <button onclick="closeSettings()" class="text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-times text-2xl"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="p-6 overflow-y-auto max-h-[60vh] space-y-6">
-                <!-- API Key Section -->
-                <div>
-                    <h4 class="text-lg font-bold text-gray-900 mb-3">AI Configuration</h4>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Groq API Key</label>
-                    <input type="password" id="apiKeyInput" class="w-full px-4 py-3 rounded-lg input-field mb-3" 
-                           placeholder="Enter your Groq API key">
-                    <button onclick="saveApiKey()" class="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition">
-                        <i class="fas fa-save mr-2"></i>Save API Key
-                    </button>
-                    <p class="text-xs text-gray-500 mt-2">Get your free API key from <a href="https://console.groq.com" target="_blank" class="text-blue-600 hover:underline">console.groq.com</a></p>
-                </div>
-
-                <!-- Clinic Branding Section -->
-                <div class="border-t border-gray-200 pt-6">
-                    <h4 class="text-lg font-bold text-gray-900 mb-3">Clinic Branding</h4>
-                    <div class="space-y-3">
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Clinic Name</label>
-                            <input type="text" id="brandingClinicName" class="w-full px-4 py-3 rounded-lg input-field" 
-                                   placeholder="Your Clinic Name">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Tagline</label>
-                            <input type="text" id="brandingTagline" class="w-full px-4 py-3 rounded-lg input-field" 
-                                   placeholder="Your Clinic Tagline">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Doctor Name</label>
-                            <input type="text" id="brandingDoctorName" class="w-full px-4 py-3 rounded-lg input-field" 
-                                   placeholder="Dr. Your Name">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Credentials</label>
-                            <input type="text" id="brandingCredentials" class="w-full px-4 py-3 rounded-lg input-field" 
-                                   placeholder="MBBS, MD (Medicine)">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Registration Number</label>
-                            <input type="text" id="brandingRegNumber" class="w-full px-4 py-3 rounded-lg input-field" 
-                                   placeholder="MED/2024/12345">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Phone</label>
-                            <input type="text" id="brandingPhone" class="w-full px-4 py-3 rounded-lg input-field" 
-                                   placeholder="+91 98765 43210">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
-                            <input type="email" id="brandingEmail" class="w-full px-4 py-3 rounded-lg input-field" 
-                                   placeholder="clinic@example.com">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Address</label>
-                            <textarea id="brandingAddress" rows="2" class="w-full px-4 py-3 rounded-lg input-field" 
-                                      placeholder="Clinic Address"></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Logo URL (Optional)</label>
-                            <input type="url" id="brandingLogo" class="w-full px-4 py-3 rounded-lg input-field" 
-                                   placeholder="https://example.com/logo.png">
-                        </div>
-                        <button onclick="saveBranding()" class="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition">
-                            <i class="fas fa-save mr-2"></i>Save Branding
-                        </button>
-                    </div>
+            <div id="historyContent" class="space-y-4">
+                <div class="text-center py-12 text-gray-400">
+                    <i class="fas fa-history text-6xl mb-4"></i>
+                    <p class="text-lg font-semibold">No prescriptions yet</p>
+                    <p class="text-sm">Generated prescriptions will appear here</p>
                 </div>
             </div>
         </div>
@@ -432,6 +438,7 @@
         <!-- Load main app script (contains PrescriptionDB class) -->
     <script src="app.js"></script>
     <script src="COMPLETE_FIX.js"></script>
+    <script src="validator-fix.js"></script>
     
     <!-- CRITICAL: Load setupBanner fix immediately after app.js -->
     <script src="app-setupbanner-fix.js"></script>
