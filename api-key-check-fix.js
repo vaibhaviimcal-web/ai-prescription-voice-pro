@@ -7,21 +7,45 @@
     window.checkApiKey = function() {
         const apiKey = localStorage.getItem('groq_api_key');
         
+        // Get elements with null checks
+        const setupBanner = document.getElementById('setupBanner');
+        const aiStatus = document.getElementById('aiStatus');
+        
         if (!apiKey) {
             console.warn('⚠️ No API key found. Please configure Groq API key.');
-            document.getElementById('setupBanner').style.display = 'block';
-            document.getElementById('aiStatus').innerHTML = '<i class="fas fa-circle text-yellow-500 mr-2 text-xs"></i>AI Not Configured';
-            document.getElementById('aiStatus').className = 'px-4 py-2 bg-yellow-100 text-yellow-700 rounded-lg font-semibold text-sm border border-yellow-200';
+            
+            // Only update setupBanner if it exists
+            if (setupBanner) {
+                setupBanner.style.display = 'block';
+            }
+            
+            // Update AI status if element exists
+            if (aiStatus) {
+                aiStatus.innerHTML = '<i class="fas fa-circle text-yellow-500 mr-2 text-xs"></i>AI Not Configured';
+                aiStatus.className = 'px-4 py-2 bg-yellow-100 text-yellow-700 rounded-lg font-semibold text-sm border border-yellow-200';
+            }
         } else {
             console.log('✅ API key found');
-            document.getElementById('aiStatus').innerHTML = '<i class="fas fa-circle text-green-500 mr-2 text-xs"></i>AI Ready';
-            document.getElementById('aiStatus').className = 'px-4 py-2 bg-green-100 text-green-700 rounded-lg font-semibold text-sm border border-green-200';
-            document.getElementById('setupBanner').style.display = 'none';
+            
+            // Update AI status if element exists
+            if (aiStatus) {
+                aiStatus.innerHTML = '<i class="fas fa-circle text-green-500 mr-2 text-xs"></i>AI Ready';
+                aiStatus.className = 'px-4 py-2 bg-green-100 text-green-700 rounded-lg font-semibold text-sm border border-green-200';
+            }
+            
+            // Hide setup banner if it exists
+            if (setupBanner) {
+                setupBanner.style.display = 'none';
+            }
         }
     };
     
-    // Run check on load
-    window.checkApiKey();
+    // Run check on load with delay to ensure DOM is ready
+    setTimeout(() => {
+        if (window.checkApiKey) {
+            window.checkApiKey();
+        }
+    }, 100);
 })();
 
 // Add better error message when form is submitted without API key
