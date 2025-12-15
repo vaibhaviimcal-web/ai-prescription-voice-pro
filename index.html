@@ -17,6 +17,8 @@
         body {
             background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
             min-height: 100vh;
+            margin: 0;
+            padding: 0;
         }
         
         .glass-effect {
@@ -135,6 +137,29 @@
             border-radius: 8px;
         }
 
+        /* Enterprise Full Width Layout */
+        .enterprise-container {
+            width: 100%;
+            max-width: 100%;
+            padding-left: 2rem;
+            padding-right: 2rem;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 1920px) {
+            .enterprise-container {
+                padding-left: 4rem;
+                padding-right: 4rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .enterprise-container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+
         @media print {
             body * {
                 visibility: hidden;
@@ -161,7 +186,7 @@
         </a>
     </div>
 
-    <div class="container mx-auto px-4 py-8" style="max-width: 1600px;">
+    <div class="enterprise-container py-8">
         <!-- Logo & Branding Section -->
         <div class="text-center mb-8">
             <div id="clinicLogoContainer" class="mb-4">
@@ -247,7 +272,7 @@
         </div>
 
         <!-- Main Content Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Left Column - Patient Information Form -->
             <div class="bg-white rounded-2xl p-8 card-shadow-lg">
                 <div class="flex justify-between items-center mb-6">
