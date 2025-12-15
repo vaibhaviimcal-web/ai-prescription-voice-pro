@@ -213,7 +213,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-600 text-sm font-medium">Patients Treated</p>
-                        <p class="text-3xl font-bold text-green-600 mt-2" id="patientsCount">2</p>
+                        <p class="text-3xl font-bold text-green-600 mt-2" id="patientsCount">0</p>
                     </div>
                     <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                         <i class="fas fa-users text-green-600 text-xl"></i>
@@ -410,6 +410,9 @@
     <!-- API CHECK AND VOICE FIX - LOAD EARLY -->
     <script src="fix-api-check-and-voice.js"></script>
     
+    <!-- FORM SUBMISSION FIX - CRITICAL FOR PRESCRIPTION GENERATION -->
+    <script src="fix-form-submission.js"></script>
+    
     <!-- ALL SCRIPTS -->
     <script src="app.js"></script>
     <script src="voice-recognition.js"></script>
@@ -419,9 +422,6 @@
     <script src="dosage-calculator.js"></script>
     <script src="prescription-validator.js"></script>
     <script src="safety-integration.js"></script>
-    
-    <!-- CORE PRESCRIPTION GENERATION -->
-    <script src="generate-prescription.js"></script>
     
     <!-- WEEK 2 FEATURES -->
     <script src="prescription-templates.js"></script>
