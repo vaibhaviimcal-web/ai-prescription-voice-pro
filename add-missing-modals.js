@@ -130,7 +130,13 @@
                                     <span class="text-sm text-gray-500 ml-2">(PNG/JPG, max 500KB)</span>
                                 </label>
                                 <input type="file" id="clinicLogo" accept="image/png,image/jpeg,image/jpg"
-                                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    onchange="handleLogoUpload(event)">
+                                <div id="logoPreview" class="mt-4" style="display: none;">
+                                    <p class="text-sm text-gray-600 mb-2">Preview:</p>
+                                    <img id="logoPreviewImg" src="" alt="Logo Preview" 
+                                        class="max-h-32 rounded-lg shadow-md">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -198,16 +204,10 @@
                 
                 <!-- Footer -->
                 <div class="bg-gray-50 p-4 border-t border-gray-200">
-                    <div class="flex justify-between items-center">
-                        <p class="text-sm text-gray-600">
-                            <i class="fas fa-info-circle mr-1"></i>
-                            <span id="historyCountText">0</span> prescriptions found
-                        </p>
-                        <button onclick="closeHistoryModal()" 
-                            class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-all">
-                            Close
-                        </button>
-                    </div>
+                    <p class="text-sm text-gray-600 text-center">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Prescriptions are stored locally in your browser
+                    </p>
                 </div>
             </div>
         `;
@@ -238,47 +238,17 @@
                     </div>
                 </div>
                 
-                <!-- Search & Filter -->
-                <div class="p-6 border-b border-gray-200">
-                    <div class="flex gap-4">
-                        <div class="flex-1 relative">
-                            <input type="text" id="templateSearch" 
-                                placeholder="Search templates..."
-                                class="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                oninput="filterTemplates()">
-                            <i class="fas fa-search absolute left-4 top-4 text-gray-400"></i>
-                        </div>
-                        <select id="templateCategory" 
-                            class="px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                            onchange="filterTemplates()">
-                            <option value="">All Categories</option>
-                            <option value="respiratory">Respiratory</option>
-                            <option value="gastrointestinal">Gastrointestinal</option>
-                            <option value="cardiovascular">Cardiovascular</option>
-                            <option value="dermatology">Dermatology</option>
-                            <option value="pain">Pain Management</option>
-                            <option value="infection">Infections</option>
-                        </select>
-                    </div>
-                </div>
-                
                 <!-- Templates Grid -->
-                <div id="templatesList" class="p-6 max-h-[60vh] overflow-y-auto">
+                <div id="templatesList" class="p-6 max-h-[70vh] overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Templates will be loaded here -->
                 </div>
                 
                 <!-- Footer -->
                 <div class="bg-gray-50 p-4 border-t border-gray-200">
-                    <div class="flex justify-between items-center">
-                        <p class="text-sm text-gray-600">
-                            <i class="fas fa-info-circle mr-1"></i>
-                            <span id="templateCountText">0</span> templates available
-                        </p>
-                        <button onclick="closeTemplatesModal()" 
-                            class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-all">
-                            Close
-                        </button>
-                    </div>
+                    <p class="text-sm text-gray-600 text-center">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Click on a template to auto-fill the prescription form
+                    </p>
                 </div>
             </div>
         `;
@@ -286,7 +256,7 @@
         document.body.appendChild(modal);
     }
     
-    // Global functions for modal control
+    // Global functions
     window.closeSettingsModal = function() {
         const modal = document.getElementById('settingsModal');
         if (modal) modal.style.display = 'none';
@@ -302,6 +272,46 @@
         if (modal) modal.style.display = 'none';
     };
     
+    // Handle logo upload with preview
+    window.handleLogoUpload = function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        // Validate file size (500KB max)
+        if (file.size > 500 * 1024) {
+            alert('Logo file size must be less than 500KB');
+            event.target.value = '';
+            return;
+        }
+        
+        // Validate file type
+        if (!file.type.match('image/(png|jpeg|jpg)')) {
+            alert('Logo must be PNG or JPG format');
+            event.target.value = '';
+            return;
+        }
+        
+        // Read and preview the file
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const logoData = e.target.result;
+            
+            // Show preview
+            const preview = document.getElementById('logoPreview');
+            const previewImg = document.getElementById('logoPreviewImg');
+            if (preview && previewImg) {
+                previewImg.src = logoData;
+                preview.style.display = 'block';
+            }
+            
+            // Store in temporary variable for saving
+            window.tempLogoData = logoData;
+            
+            console.log('✅ Logo uploaded and previewed');
+        };
+        reader.readAsDataURL(file);
+    };
+    
     window.saveSettings = function() {
         const settings = {
             groqApiKey: document.getElementById('groqApiKey')?.value || '',
@@ -314,13 +324,38 @@
             clinicAddress: document.getElementById('clinicAddress')?.value || ''
         };
         
+        // Add logo if uploaded
+        if (window.tempLogoData) {
+            settings.clinicLogo = window.tempLogoData;
+            console.log('✅ Logo added to settings');
+        } else {
+            // Keep existing logo if no new upload
+            const existingSettings = JSON.parse(localStorage.getItem('clinicSettings') || '{}');
+            if (existingSettings.clinicLogo) {
+                settings.clinicLogo = existingSettings.clinicLogo;
+                console.log('✅ Keeping existing logo');
+            }
+        }
+        
         localStorage.setItem('clinicSettings', JSON.stringify(settings));
+        console.log('✅ Settings saved to localStorage');
+        
+        // Clear temp logo data
+        window.tempLogoData = null;
         
         // Update display
         updateClinicDisplay();
         
+        // Trigger logo update
+        if (window.updateClinicLogo) {
+            window.updateClinicLogo();
+        }
+        
+        // Dispatch custom event
+        window.dispatchEvent(new Event('settingsSaved'));
+        
         // Show success message
-        alert('Settings saved successfully!');
+        alert('Settings saved successfully! Logo will appear in 1-2 seconds.');
         
         // Close modal
         closeSettingsModal();
@@ -340,6 +375,16 @@
         if (document.getElementById('clinicPhone')) document.getElementById('clinicPhone').value = settings.clinicPhone || '';
         if (document.getElementById('clinicEmail')) document.getElementById('clinicEmail').value = settings.clinicEmail || '';
         if (document.getElementById('clinicAddress')) document.getElementById('clinicAddress').value = settings.clinicAddress || '';
+        
+        // Show existing logo preview if available
+        if (settings.clinicLogo) {
+            const preview = document.getElementById('logoPreview');
+            const previewImg = document.getElementById('logoPreviewImg');
+            if (preview && previewImg) {
+                previewImg.src = settings.clinicLogo;
+                preview.style.display = 'block';
+            }
+        }
     }
     
     function updateClinicDisplay() {
