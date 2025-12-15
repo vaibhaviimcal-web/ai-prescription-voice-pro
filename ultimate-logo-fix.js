@@ -54,14 +54,28 @@
     
     function updateLogo() {
         try {
-            // Get settings
+            // Get settings safely
             const settingsStr = localStorage.getItem('clinicSettings');
             if (!settingsStr) {
                 console.log('ℹ️ No clinic settings found');
                 return;
             }
             
-            const settings = JSON.parse(settingsStr);
+            // Parse settings safely
+            let settings;
+            try {
+                settings = JSON.parse(settingsStr);
+            } catch (parseError) {
+                console.error('❌ Error parsing settings:', parseError);
+                return;
+            }
+            
+            // Check if settings is valid
+            if (!settings || typeof settings !== 'object') {
+                console.error('❌ Invalid settings object');
+                return;
+            }
+            
             const logo = settings.clinicLogo;
             
             // Update header logo
@@ -79,53 +93,61 @@
     }
     
     function updateHeaderLogo(logo) {
-        const container = document.getElementById('clinicLogoContainer');
-        if (!container) {
-            console.log('⚠️ Logo container not found');
-            return;
-        }
-        
-        if (logo && logo.length > 100) { // Valid base64 image
-            container.innerHTML = `
-                <div class="flex justify-center">
-                    <img src="${logo}" 
-                         alt="Clinic Logo" 
-                         class="rounded-lg shadow-lg"
-                         style="max-height: 120px; max-width: 400px; object-fit: contain; display: block;"
-                         onerror="this.style.display='none'; console.error('Logo failed to load');"
-                         onload="console.log('✅ Logo loaded successfully');">
-                </div>
-            `;
-            console.log('✅ Header logo HTML updated');
-        } else {
-            container.innerHTML = '';
-            console.log('ℹ️ No logo to display');
+        try {
+            const container = document.getElementById('clinicLogoContainer');
+            if (!container) {
+                console.log('⚠️ Logo container not found');
+                return;
+            }
+            
+            if (logo && typeof logo === 'string' && logo.length > 100) { // Valid base64 image
+                container.innerHTML = `
+                    <div class="flex justify-center">
+                        <img src="${logo}" 
+                             alt="Clinic Logo" 
+                             class="rounded-lg shadow-lg"
+                             style="max-height: 120px; max-width: 400px; object-fit: contain; display: block;"
+                             onerror="this.style.display='none'; console.error('Logo failed to load');"
+                             onload="console.log('✅ Logo loaded successfully');">
+                    </div>
+                `;
+                console.log('✅ Header logo HTML updated');
+            } else {
+                container.innerHTML = '';
+                console.log('ℹ️ No logo to display');
+            }
+        } catch (error) {
+            console.error('❌ Error updating header logo:', error);
         }
     }
     
     function updateClinicInfo(settings) {
-        // Update clinic name
-        const nameDisplay = document.getElementById('clinicNameDisplay');
-        if (nameDisplay && settings.clinicName) {
-            nameDisplay.textContent = settings.clinicName;
-        }
-        
-        // Update tagline
-        const taglineDisplay = document.getElementById('clinicTaglineDisplay');
-        if (taglineDisplay && settings.clinicTagline) {
-            taglineDisplay.textContent = settings.clinicTagline;
-        }
-        
-        // Update doctor name
-        const doctorDisplay = document.getElementById('doctorNameDisplay');
-        if (doctorDisplay && settings.doctorName) {
-            doctorDisplay.textContent = settings.doctorName;
-        }
-        
-        // Update registration number
-        const regDisplay = document.getElementById('regNumberDisplay');
-        if (regDisplay && settings.regNumber) {
-            regDisplay.textContent = 'Reg. No: ' + settings.regNumber;
+        try {
+            // Safely update clinic name
+            const nameDisplay = document.getElementById('clinicNameDisplay');
+            if (nameDisplay && settings.clinicName) {
+                nameDisplay.textContent = settings.clinicName;
+            }
+            
+            // Safely update tagline
+            const taglineDisplay = document.getElementById('clinicTaglineDisplay');
+            if (taglineDisplay && settings.clinicTagline) {
+                taglineDisplay.textContent = settings.clinicTagline;
+            }
+            
+            // Safely update doctor name
+            const doctorDisplay = document.getElementById('doctorNameDisplay');
+            if (doctorDisplay && settings.doctorName) {
+                doctorDisplay.textContent = settings.doctorName;
+            }
+            
+            // Safely update registration number
+            const regDisplay = document.getElementById('regNumberDisplay');
+            if (regDisplay && settings.regNumber) {
+                regDisplay.textContent = 'Reg. No: ' + settings.regNumber;
+            }
+        } catch (error) {
+            console.error('❌ Error updating clinic info:', error);
         }
     }
     
