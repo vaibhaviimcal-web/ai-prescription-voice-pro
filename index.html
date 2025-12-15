@@ -181,7 +181,7 @@
         </div>
 
         <!-- Configuration Alert -->
-        <div id="configAlert" class="mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+        <div id="configAlert" class="mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg" style="display: none;">
             <div class="flex items-center">
                 <i class="fas fa-exclamation-triangle text-yellow-600 text-xl mr-3"></i>
                 <div class="flex-1">
@@ -404,6 +404,12 @@
         </div>
     </div>
     
+    <!-- MODALS FIX - MUST BE LOADED FIRST -->
+    <script src="add-missing-modals.js"></script>
+    
+    <!-- API CHECK AND VOICE FIX - LOAD EARLY -->
+    <script src="fix-api-check-and-voice.js"></script>
+    
     <!-- ALL SCRIPTS -->
     <script src="app.js"></script>
     <script src="voice-recognition.js"></script>
@@ -430,8 +436,5 @@
     <!-- PATIENT PORTAL INTEGRATION -->
     <script src="add-patient-portal-link.js"></script>
     <script src="patient-search-integration.js"></script>
-    
-    <!-- MODALS FIX - MUST BE LOADED FIRST -->
-    <script src="add-missing-modals.js"></script>
 </body>
 </html>
