@@ -1,10 +1,13 @@
-// Ultimate Logo Fix - Guaranteed to Work
-// This script ensures logo displays everywhere, always
+// Ultimate Logo Fix - Static Default with Custom Override
+// PATCH: Uses static logo file, localStorage for custom logos only
 
 (function() {
     'use strict';
     
-    console.log('🔧 Ultimate Logo Fix Loading...');
+    console.log('🔧 Logo System Loading...');
+    
+    // Static default logo path
+    const DEFAULT_LOGO = './assets/default-logo.png';
     
     // Initialize immediately
     init();
@@ -20,22 +23,13 @@
     function init() {
         console.log('🔧 Initializing logo display...');
         
-        // Update logo immediately
+        // Display logo immediately
         updateLogo();
         
-        // Update every 500ms for first 10 seconds
-        let count = 0;
-        const fastInterval = setInterval(() => {
-            updateLogo();
-            count++;
-            if (count >= 20) { // 20 * 500ms = 10 seconds
-                clearInterval(fastInterval);
-                // Then update every 2 seconds
-                setInterval(updateLogo, 2000);
-            }
-        }, 500);
+        // Update periodically (less aggressive than before)
+        setInterval(updateLogo, 3000);
         
-        // Listen for storage changes
+        // Listen for storage changes (custom logo uploads)
         window.addEventListener('storage', function(e) {
             if (e.key === 'clinicSettings') {
                 console.log('📢 Settings changed, updating logo...');
@@ -49,73 +43,61 @@
             setTimeout(updateLogo, 100);
         });
         
-        console.log('✅ Logo fix initialized');
+        console.log('✅ Logo system initialized');
     }
     
     function updateLogo() {
         try {
-            // Get settings safely
+            // Try to get custom logo from localStorage
             const settingsStr = localStorage.getItem('clinicSettings');
-            if (!settingsStr) {
-                console.log('ℹ️ No clinic settings found');
-                return;
+            let customLogo = null;
+            let settings = null;
+            
+            if (settingsStr) {
+                try {
+                    settings = JSON.parse(settingsStr);
+                    if (settings && settings.clinicLogo && settings.clinicLogo.length > 100) {
+                        customLogo = settings.clinicLogo;
+                    }
+                } catch (parseError) {
+                    console.warn('⚠️ Could not parse settings, using default logo');
+                }
             }
             
-            // Parse settings safely
-            let settings;
-            try {
-                settings = JSON.parse(settingsStr);
-            } catch (parseError) {
-                console.error('❌ Error parsing settings:', parseError);
-                return;
+            // Update header logo (custom or default)
+            updateHeaderLogo(customLogo || DEFAULT_LOGO);
+            
+            // Update clinic info if settings exist
+            if (settings) {
+                updateClinicInfo(settings);
             }
             
-            // Check if settings is valid
-            if (!settings || typeof settings !== 'object') {
-                console.error('❌ Invalid settings object');
-                return;
-            }
-            
-            const logo = settings.clinicLogo;
-            
-            // Update header logo
-            updateHeaderLogo(logo);
-            
-            // Update clinic info display
-            updateClinicInfo(settings);
-            
-            if (logo) {
-                console.log('✅ Logo updated successfully');
-            }
         } catch (error) {
             console.error('❌ Error updating logo:', error);
+            // Fallback to default logo on error
+            updateHeaderLogo(DEFAULT_LOGO);
         }
     }
     
-    function updateHeaderLogo(logo) {
+    function updateHeaderLogo(logoSrc) {
         try {
             const container = document.getElementById('clinicLogoContainer');
             if (!container) {
-                console.log('⚠️ Logo container not found');
                 return;
             }
             
-            if (logo && typeof logo === 'string' && logo.length > 100) { // Valid base64 image
-                container.innerHTML = `
-                    <div class="flex justify-center">
-                        <img src="${logo}" 
-                             alt="Clinic Logo" 
-                             class="rounded-lg shadow-lg"
-                             style="max-height: 120px; max-width: 400px; object-fit: contain; display: block;"
-                             onerror="this.style.display='none'; console.error('Logo failed to load');"
-                             onload="console.log('✅ Logo loaded successfully');">
-                    </div>
-                `;
-                console.log('✅ Header logo HTML updated');
-            } else {
-                container.innerHTML = '';
-                console.log('ℹ️ No logo to display');
-            }
+            // Simple, clean logo display
+            container.innerHTML = `
+                <div class="flex justify-center">
+                    <img src="${logoSrc}" 
+                         alt="Clinic Logo" 
+                         class="rounded-lg shadow-lg"
+                         style="max-height: 120px; max-width: 400px; object-fit: contain; display: block;"
+                         onerror="this.src='${DEFAULT_LOGO}'; console.warn('⚠️ Logo failed, using default');"
+                         onload="console.log('✅ Logo loaded');">
+                </div>
+            `;
+            
         } catch (error) {
             console.error('❌ Error updating header logo:', error);
         }
@@ -154,6 +136,6 @@
     // Make updateLogo globally accessible
     window.updateClinicLogo = updateLogo;
     
-    console.log('✅ Ultimate Logo Fix Loaded');
+    console.log('✅ Logo System Loaded');
     
 })();
