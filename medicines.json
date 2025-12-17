@@ -1,0 +1,244 @@
+{
+  "medicines": [
+    {
+      "name": "Paracetamol",
+      "generic": "Acetaminophen",
+      "brand": "Crocin, Dolo",
+      "dosages": ["500mg", "650mg", "1000mg"],
+      "forms": ["Tablet", "Syrup", "IV"],
+      "category": "Analgesic"
+    },
+    {
+      "name": "Ibuprofen",
+      "generic": "Ibuprofen",
+      "brand": "Brufen, Advil",
+      "dosages": ["200mg", "400mg", "600mg"],
+      "forms": ["Tablet", "Syrup"],
+      "category": "NSAID"
+    },
+    {
+      "name": "Amoxicillin",
+      "generic": "Amoxicillin",
+      "brand": "Amoxil, Mox",
+      "dosages": ["250mg", "500mg", "875mg"],
+      "forms": ["Capsule", "Syrup"],
+      "category": "Antibiotic"
+    },
+    {
+      "name": "Azithromycin",
+      "generic": "Azithromycin",
+      "brand": "Azithral, Zithromax",
+      "dosages": ["250mg", "500mg"],
+      "forms": ["Tablet"],
+      "category": "Antibiotic"
+    },
+    {
+      "name": "Ciprofloxacin",
+      "generic": "Ciprofloxacin",
+      "brand": "Ciplox, Cipro",
+      "dosages": ["250mg", "500mg", "750mg"],
+      "forms": ["Tablet"],
+      "category": "Antibiotic"
+    },
+    {
+      "name": "Metformin",
+      "generic": "Metformin",
+      "brand": "Glycomet, Glucophage",
+      "dosages": ["500mg", "850mg", "1000mg"],
+      "forms": ["Tablet"],
+      "category": "Antidiabetic"
+    },
+    {
+      "name": "Glimepiride",
+      "generic": "Glimepiride",
+      "brand": "Amaryl, Glimisave",
+      "dosages": ["1mg", "2mg", "4mg"],
+      "forms": ["Tablet"],
+      "category": "Antidiabetic"
+    },
+    {
+      "name": "Amlodipine",
+      "generic": "Amlodipine",
+      "brand": "Amlong, Norvasc",
+      "dosages": ["2.5mg", "5mg", "10mg"],
+      "forms": ["Tablet"],
+      "category": "Antihypertensive"
+    },
+    {
+      "name": "Atenolol",
+      "generic": "Atenolol",
+      "brand": "Aten, Tenormin",
+      "dosages": ["25mg", "50mg", "100mg"],
+      "forms": ["Tablet"],
+      "category": "Beta Blocker"
+    },
+    {
+      "name": "Losartan",
+      "generic": "Losartan",
+      "brand": "Losar, Cozaar",
+      "dosages": ["25mg", "50mg", "100mg"],
+      "forms": ["Tablet"],
+      "category": "ARB"
+    },
+    {
+      "name": "Omeprazole",
+      "generic": "Omeprazole",
+      "brand": "Omez, Prilosec",
+      "dosages": ["20mg", "40mg"],
+      "forms": ["Capsule"],
+      "category": "PPI"
+    },
+    {
+      "name": "Pantoprazole",
+      "generic": "Pantoprazole",
+      "brand": "Pan, Protonix",
+      "dosages": ["20mg", "40mg"],
+      "forms": ["Tablet"],
+      "category": "PPI"
+    },
+    {
+      "name": "Ranitidine",
+      "generic": "Ranitidine",
+      "brand": "Aciloc, Zantac",
+      "dosages": ["150mg", "300mg"],
+      "forms": ["Tablet"],
+      "category": "H2 Blocker"
+    },
+    {
+      "name": "Cetirizine",
+      "generic": "Cetirizine",
+      "brand": "Zyrtec, Alerid",
+      "dosages": ["5mg", "10mg"],
+      "forms": ["Tablet", "Syrup"],
+      "category": "Antihistamine"
+    },
+    {
+      "name": "Montelukast",
+      "generic": "Montelukast",
+      "brand": "Montair, Singulair",
+      "dosages": ["4mg", "5mg", "10mg"],
+      "forms": ["Tablet"],
+      "category": "Leukotriene Inhibitor"
+    },
+    {
+      "name": "Salbutamol",
+      "generic": "Albuterol",
+      "brand": "Asthalin, Ventolin",
+      "dosages": ["2mg", "4mg", "100mcg"],
+      "forms": ["Tablet", "Inhaler", "Syrup"],
+      "category": "Bronchodilator"
+    },
+    {
+      "name": "Prednisolone",
+      "generic": "Prednisolone",
+      "brand": "Wysolone, Omnacortil",
+      "dosages": ["5mg", "10mg", "20mg"],
+      "forms": ["Tablet"],
+      "category": "Corticosteroid"
+    },
+    {
+      "name": "Dexamethasone",
+      "generic": "Dexamethasone",
+      "brand": "Decadron, Dexona",
+      "dosages": ["0.5mg", "4mg", "8mg"],
+      "forms": ["Tablet", "Injection"],
+      "category": "Corticosteroid"
+    },
+    {
+      "name": "Diclofenac",
+      "generic": "Diclofenac",
+      "brand": "Voveran, Voltaren",
+      "dosages": ["50mg", "75mg", "100mg"],
+      "forms": ["Tablet", "Gel"],
+      "category": "NSAID"
+    },
+    {
+      "name": "Aspirin",
+      "generic": "Acetylsalicylic Acid",
+      "brand": "Disprin, Ecosprin",
+      "dosages": ["75mg", "150mg", "325mg"],
+      "forms": ["Tablet"],
+      "category": "Antiplatelet"
+    },
+    {
+      "name": "Clopidogrel",
+      "generic": "Clopidogrel",
+      "brand": "Plavix, Clopivas",
+      "dosages": ["75mg", "150mg"],
+      "forms": ["Tablet"],
+      "category": "Antiplatelet"
+    },
+    {
+      "name": "Atorvastatin",
+      "generic": "Atorvastatin",
+      "brand": "Lipitor, Atorva",
+      "dosages": ["10mg", "20mg", "40mg", "80mg"],
+      "forms": ["Tablet"],
+      "category": "Statin"
+    },
+    {
+      "name": "Rosuvastatin",
+      "generic": "Rosuvastatin",
+      "brand": "Crestor, Rosuvas",
+      "dosages": ["5mg", "10mg", "20mg", "40mg"],
+      "forms": ["Tablet"],
+      "category": "Statin"
+    },
+    {
+      "name": "Levothyroxine",
+      "generic": "Levothyroxine",
+      "brand": "Eltroxin, Synthroid",
+      "dosages": ["25mcg", "50mcg", "75mcg", "100mcg"],
+      "forms": ["Tablet"],
+      "category": "Thyroid Hormone"
+    },
+    {
+      "name": "Vitamin D3",
+      "generic": "Cholecalciferol",
+      "brand": "Calcirol, Uprise",
+      "dosages": ["1000IU", "2000IU", "60000IU"],
+      "forms": ["Tablet", "Sachet"],
+      "category": "Vitamin"
+    },
+    {
+      "name": "Calcium Carbonate",
+      "generic": "Calcium Carbonate",
+      "brand": "Shelcal, Calci",
+      "dosages": ["500mg", "1000mg"],
+      "forms": ["Tablet"],
+      "category": "Mineral"
+    },
+    {
+      "name": "Folic Acid",
+      "generic": "Folic Acid",
+      "brand": "Folvite",
+      "dosages": ["1mg", "5mg"],
+      "forms": ["Tablet"],
+      "category": "Vitamin"
+    },
+    {
+      "name": "Iron Supplement",
+      "generic": "Ferrous Sulfate",
+      "brand": "Fefol, Autrin",
+      "dosages": ["100mg", "200mg"],
+      "forms": ["Tablet", "Syrup"],
+      "category": "Mineral"
+    },
+    {
+      "name": "Multivitamin",
+      "generic": "Multivitamin",
+      "brand": "Becosules, Supradyn",
+      "dosages": ["1 cap"],
+      "forms": ["Capsule", "Tablet"],
+      "category": "Vitamin"
+    },
+    {
+      "name": "Domperidone",
+      "generic": "Domperidone",
+      "brand": "Domstal, Motilium",
+      "dosages": ["10mg", "30mg"],
+      "forms": ["Tablet"],
+      "category": "Antiemetic"
+    }
+  ]
+}
