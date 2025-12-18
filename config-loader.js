@@ -26,20 +26,21 @@
         localStorage.setItem('groqApiKey', fullKey);
         console.log('✅ API Key configured');
         
-        // Set default clinic info if not set
-        if (!localStorage.getItem('clinicBranding')) {
-            const defaultBranding = {
-                clinicName: 'MediScript AI',
-                tagline: 'Enterprise Medical Platform',
-                doctorName: 'Dr. John Doe, MBBS, MD',
-                regNumber: 'MCI-12345',
-                phone: '+1 (555) 123-4567',
-                email: 'doctor@mediscript.ai',
-                address: '123 Medical Center, Healthcare District'
-            };
-            localStorage.setItem('clinicBranding', JSON.stringify(defaultBranding));
-            console.log('✅ Default branding set');
-        }
+        // Set default clinic info with Dr. Kumar Vaibhav
+        const defaultBranding = {
+            clinicName: 'MediScript AI',
+            tagline: 'Enterprise Medical Platform',
+            doctorName: 'Dr. Kumar Vaibhav',
+            credentials: 'MBBS, MD',
+            regNumber: 'MED/2024/12345',
+            phone: '+91 9999456126',
+            email: 'vaibhav.iimcal@gmail.com',
+            address: '123 Medical Center, Healthcare District'
+        };
+        
+        // Always update with latest default branding
+        localStorage.setItem('clinicBranding', JSON.stringify(defaultBranding));
+        console.log('✅ Default branding set - Dr. Kumar Vaibhav');
         
         // Make key available globally
         window.GROQ_API_KEY = fullKey;
@@ -65,6 +66,24 @@
     // Update interface to show ready status
     function updateInterface() {
         setTimeout(() => {
+            // Update clinic name in header
+            const clinicNameEl = document.getElementById('clinicName');
+            if (clinicNameEl) {
+                clinicNameEl.textContent = 'MediScript AI';
+            }
+            
+            // Update doctor name in header
+            const doctorNameEl = document.getElementById('doctorName');
+            if (doctorNameEl) {
+                doctorNameEl.textContent = 'Dr. Kumar Vaibhav';
+            }
+            
+            // Update registration number
+            const regNumberEl = document.getElementById('regNumber');
+            if (regNumberEl) {
+                regNumberEl.textContent = 'Reg. No: MED/2024/12345';
+            }
+            
             // Update AI status
             const statusEl = document.getElementById('aiStatus');
             if (statusEl) {
@@ -84,7 +103,7 @@
                 }
             });
             
-            console.log('✅ Interface updated - App ready to use!');
+            console.log('✅ Interface updated - Dr. Kumar Vaibhav - App ready to use!');
         }, 100);
     }
     
@@ -98,5 +117,6 @@
     // Also run after delays to catch dynamic content
     setTimeout(initializeApp, 500);
     setTimeout(updateInterface, 1000);
+    setTimeout(updateInterface, 2000);
     
 })();
