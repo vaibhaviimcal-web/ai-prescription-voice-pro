@@ -12,6 +12,7 @@
     
     if (alreadyLoaded) {
         console.log('✅ Critical fixes already loaded');
+        loadFormFix();
         return;
     }
     
@@ -21,6 +22,8 @@
     script.async = false; // Load synchronously
     script.onload = function() {
         console.log('✅ Critical fixes loaded successfully via emergency fix');
+        // Load form fix after critical fixes
+        loadFormFix();
     };
     script.onerror = function() {
         console.error('❌ Failed to load critical fixes');
@@ -34,6 +37,20 @@
     } else {
         document.head.appendChild(script);
         console.log('✅ Appended critical fixes to head');
+    }
+    
+    // Load form fix
+    function loadFormFix() {
+        const formFixScript = document.createElement('script');
+        formFixScript.src = 'fix-form-and-generation.js';
+        formFixScript.async = false;
+        formFixScript.onload = function() {
+            console.log('✅ Form and generation fix loaded');
+        };
+        formFixScript.onerror = function() {
+            console.error('❌ Failed to load form fix');
+        };
+        document.head.appendChild(formFixScript);
     }
     
 })();
