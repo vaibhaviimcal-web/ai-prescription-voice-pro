@@ -16,16 +16,15 @@ function createHorizontalTemplates() {
         return true;
     }
     
-    // Find the form section
-    const formSection = document.querySelector('.space-y-4');
-    if (!formSection) {
-        console.warn('Form section not found, retrying...');
+    // Find the button row (Templates + Search Patient buttons)
+    const buttonRow = document.querySelector('.flex.gap-2.mb-6');
+    if (!buttonRow) {
+        console.warn('Button row not found, retrying...');
         return false;
     }
     
     // Find the Templates button to hide it
-    const templatesBtn = document.querySelector('button[onclick*="Templates"]') || 
-                        document.querySelector('button:has(.fa-file-medical)');
+    const templatesBtn = buttonRow.querySelector('button[onclick*="Templates"]');
     
     // Create new Quick Templates section
     const templatesSection = document.createElement('div');
@@ -68,9 +67,9 @@ function createHorizontalTemplates() {
         </div>
     `;
     
-    // Insert at the beginning of form section
-    formSection.insertBefore(templatesSection, formSection.firstChild);
-    console.log('✅ Quick Templates section added');
+    // Insert AFTER the button row (before the form)
+    buttonRow.parentNode.insertBefore(templatesSection, buttonRow.nextSibling);
+    console.log('✅ Quick Templates section added after button row');
     
     // Hide the original Templates button if found
     if (templatesBtn) {
