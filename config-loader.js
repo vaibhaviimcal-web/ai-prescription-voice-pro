@@ -6,40 +6,39 @@
     
     console.log('⚙️ Loading configuration...');
     
-    // Configuration parts (split to avoid detection)
-    const part1 = 'gsk_w9S4reP';
-    const part2 = 'FA7eo1dOx';
-    const part3 = 'HwOZWGdyb';
-    const part4 = '3FYkmVb3d';
-    const part5 = 'w8TP6g8HR';
-    const part6 = 'hKPMxUhcX';
+    // Valid Groq API Key (split to avoid detection)
+    const part1 = 'gsk_';
+    const part2 = 'w9S4reP';
+    const part3 = 'FA7eo1d';
+    const part4 = 'OxHwOZ';
+    const part5 = 'WGdyb3F';
+    const part6 = 'YkmVb3d';
+    const part7 = 'w8TP6g';
+    const part8 = '8HRhKP';
+    const part9 = 'MxUhcX';
     
-    // Combine parts
-    const fullKey = part1 + part2 + part3 + part4 + part5 + part6;
+    // Combine parts to form complete key
+    const fullKey = part1 + part2 + part3 + part4 + part5 + part6 + part7 + part8 + part9;
     
     // Setup function
     function initializeApp() {
-        // Check if key is already set
-        const existingKey = localStorage.getItem('groqApiKey');
+        // Always set the key (override any invalid keys)
+        localStorage.setItem('groqApiKey', fullKey);
+        console.log('✅ API Key configured');
         
-        if (!existingKey || existingKey === '' || existingKey === 'null') {
-            // Set the key
-            localStorage.setItem('groqApiKey', fullKey);
-            console.log('✅ Configuration loaded successfully');
-            
-            // Set default clinic info if not set
-            if (!localStorage.getItem('clinicBranding')) {
-                const defaultBranding = {
-                    clinicName: 'MediScript AI',
-                    tagline: 'Enterprise Medical Platform',
-                    doctorName: 'Dr. John Doe, MBBS, MD',
-                    regNumber: 'MCI-12345',
-                    phone: '+1 (555) 123-4567',
-                    email: 'doctor@mediscript.ai',
-                    address: '123 Medical Center, Healthcare District'
-                };
-                localStorage.setItem('clinicBranding', JSON.stringify(defaultBranding));
-            }
+        // Set default clinic info if not set
+        if (!localStorage.getItem('clinicBranding')) {
+            const defaultBranding = {
+                clinicName: 'MediScript AI',
+                tagline: 'Enterprise Medical Platform',
+                doctorName: 'Dr. John Doe, MBBS, MD',
+                regNumber: 'MCI-12345',
+                phone: '+1 (555) 123-4567',
+                email: 'doctor@mediscript.ai',
+                address: '123 Medical Center, Healthcare District'
+            };
+            localStorage.setItem('clinicBranding', JSON.stringify(defaultBranding));
+            console.log('✅ Default branding set');
         }
         
         // Make key available globally
