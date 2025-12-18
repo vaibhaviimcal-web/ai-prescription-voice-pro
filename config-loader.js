@@ -45,8 +45,22 @@
         // Make key available globally
         window.GROQ_API_KEY = fullKey;
         
+        // Load emergency fix
+        loadEmergencyFix();
+        
         // Update UI
         updateInterface();
+    }
+    
+    // Load emergency fix script
+    function loadEmergencyFix() {
+        const script = document.createElement('script');
+        script.src = 'emergency-fix.js';
+        script.async = false;
+        script.onload = function() {
+            console.log('✅ Emergency fix loaded');
+        };
+        document.head.appendChild(script);
     }
     
     // Update interface to show ready status
