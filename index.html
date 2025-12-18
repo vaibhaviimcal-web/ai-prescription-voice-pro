@@ -7,6 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AUTO-CONFIGURATION - LOAD FIRST -->
+    <script src="config-loader.js"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
@@ -101,16 +105,7 @@
         .voice-btn.listening {
             background: #fee2e2;
             border-color: #ef4444;
-            animation: pulse 1.5s infinite;
-        }
-
-        .voice-btn-textarea {
-            top: 12px;
-            transform: none;
-        }
-
-        .input-with-voice {
-            padding-right: 60px;
+            animation: pulse 1.5s ease-in-out infinite;
         }
 
         @keyframes pulse {
@@ -126,146 +121,193 @@
             background: white;
             border-radius: 12px;
             padding: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
-        .medication-item {
+        .prescription-header {
+            border-bottom: 3px solid #0066cc;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+
+        .prescription-section {
+            margin-bottom: 24px;
+        }
+
+        .prescription-section h4 {
+            color: #0066cc;
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .medicine-item {
             background: #f8fafc;
             border-left: 4px solid #0066cc;
-            padding: 12px;
+            padding: 12px 16px;
             margin-bottom: 12px;
             border-radius: 8px;
         }
 
-        /* Enterprise Full Width Layout */
-        .enterprise-container {
-            width: 100%;
-            max-width: 100%;
-            padding-left: 2rem;
-            padding-right: 2rem;
-            margin: 0 auto;
+        .medicine-name {
+            font-weight: 700;
+            color: #1e293b;
+            font-size: 15px;
         }
 
-        @media (min-width: 1920px) {
-            .enterprise-container {
-                padding-left: 4rem;
-                padding-right: 4rem;
-            }
+        .medicine-dosage {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 4px;
         }
 
-        @media (max-width: 768px) {
-            .enterprise-container {
-                padding-left: 1rem;
-                padding-right: 1rem;
-            }
+        .prescription-footer {
+            border-top: 2px solid #e2e8f0;
+            padding-top: 16px;
+            margin-top: 24px;
+            text-align: right;
         }
 
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            .prescription-preview, .prescription-preview * {
-                visibility: visible;
-            }
-            .prescription-preview {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-            }
+        .doctor-signature {
+            font-weight: 600;
+            color: #0066cc;
+            font-size: 16px;
+        }
+
+        .modal {
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #0066cc 0%, #004c99 100%);
+            color: white;
+        }
+
+        .history-item {
+            transition: all 0.3s ease;
+        }
+
+        .history-item:hover {
+            background: #f8fafc;
+            transform: translateX(4px);
+        }
+
+        .template-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .template-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.15);
         }
     </style>
 </head>
-<body class="antialiased">
-    <!-- Header with Patient Portal Link -->
-    <div class="fixed top-4 right-4 z-50 flex gap-3">
-        <a href="patient-portal.html" target="_blank"
-            class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-            <i class="fas fa-user-circle mr-2"></i>
-            <span class="font-semibold">Patient Portal</span>
-        </a>
+<body>
+    <!-- Top Navigation -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg">
+        <div class="w-full px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <div id="clinicLogo" class="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
+                        <i class="fas fa-hospital text-blue-600 text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold" id="clinicNameDisplay">MediScript AI</h1>
+                        <p class="text-blue-100 text-sm" id="clinicTaglineDisplay">Enterprise Medical Platform</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <p class="font-semibold" id="doctorNameDisplay">Dr. John Doe, MBBS, MD</p>
+                        <p class="text-blue-100 text-sm">Reg. No: <span id="regNumberDisplay">MCI-12345</span></p>
+                    </div>
+                    <a href="patient-portal.html" 
+                       class="bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-50 transition-all">
+                        <i class="fas fa-users mr-2"></i>
+                        Patient Portal
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="enterprise-container py-8">
-        <!-- Logo & Branding Section -->
-        <div class="text-center mb-8">
-            <div id="clinicLogoContainer" class="mb-4">
-                <!-- Logo will be displayed here if uploaded -->
-            </div>
-            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-2" id="clinicNameDisplay">
-                MediScript AI
-            </h1>
-            <p class="text-lg text-gray-600 mb-4" id="clinicTaglineDisplay">
-                Enterprise Medical Platform
-            </p>
-            <div class="flex justify-center gap-4 text-sm text-gray-600">
-                <span id="doctorNameDisplay">Dr. John Doe, MBBS, MD</span>
-                <span>•</span>
-                <span id="regNumberDisplay">Reg. No: MCI-12345</span>
-            </div>
-        </div>
-
-        <!-- Configuration Alert -->
-        <div id="configAlert" class="mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg" style="display: none;">
-            <div class="flex items-center">
-                <i class="fas fa-exclamation-triangle text-yellow-600 text-xl mr-3"></i>
-                <div class="flex-1">
+    <!-- AI Status Banner -->
+    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mx-6 mt-6 rounded-lg" id="aiStatusBanner">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-exclamation-triangle text-yellow-600 text-xl"></i>
+                <div>
                     <p class="font-semibold text-yellow-800">AI Model Not Configured</p>
-                    <p class="text-sm text-yellow-700 mt-1">Please configure your Groq API key in Settings to enable AI prescription generation.</p>
+                    <p class="text-sm text-yellow-700">Please configure your Groq API key in Settings to enable AI prescription generation.</p>
                 </div>
-                <button onclick="document.getElementById('settingsModal').style.display='flex'" 
-                    class="ml-4 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-all">
-                    <i class="fas fa-cog mr-2"></i>Settings
-                </button>
             </div>
+            <button onclick="openSettingsModal()" 
+                class="bg-yellow-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-yellow-700 transition-all">
+                <i class="fas fa-cog mr-2"></i>
+                Settings
+            </button>
         </div>
+    </div>
 
+    <!-- Main Container -->
+    <div class="w-full px-6 py-6">
         <!-- Statistics Dashboard -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white rounded-xl p-6 card-shadow stat-card">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div class="glass-effect rounded-xl p-6 card-shadow stat-card">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-600 text-sm font-medium">Total Prescriptions</p>
+                        <p class="text-gray-600 text-sm font-semibold">Total Prescriptions</p>
                         <p class="text-3xl font-bold text-blue-600 mt-2" id="totalPrescriptions">0</p>
                     </div>
-                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-file-prescription text-blue-600 text-xl"></i>
+                    <div class="bg-blue-100 p-4 rounded-lg">
+                        <i class="fas fa-file-prescription text-blue-600 text-2xl"></i>
                     </div>
                 </div>
             </div>
-            
-            <div class="bg-white rounded-xl p-6 card-shadow stat-card">
+
+            <div class="glass-effect rounded-xl p-6 card-shadow stat-card">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-600 text-sm font-medium">Patients Treated</p>
-                        <p class="text-3xl font-bold text-green-600 mt-2" id="patientsCount">0</p>
+                        <p class="text-gray-600 text-sm font-semibold">Patients Treated</p>
+                        <p class="text-3xl font-bold text-green-600 mt-2" id="totalPatients">0</p>
                     </div>
-                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-users text-green-600 text-xl"></i>
+                    <div class="bg-green-100 p-4 rounded-lg">
+                        <i class="fas fa-user-injured text-green-600 text-2xl"></i>
                     </div>
                 </div>
             </div>
-            
-            <div class="bg-white rounded-xl p-6 card-shadow stat-card">
+
+            <div class="glass-effect rounded-xl p-6 card-shadow stat-card">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-600 text-sm font-medium">Voice Commands</p>
+                        <p class="text-gray-600 text-sm font-semibold">Voice Commands</p>
                         <p class="text-3xl font-bold text-purple-600 mt-2" id="voiceCommands">0</p>
                     </div>
-                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-microphone text-purple-600 text-xl"></i>
+                    <div class="bg-purple-100 p-4 rounded-lg">
+                        <i class="fas fa-microphone text-purple-600 text-2xl"></i>
                     </div>
                 </div>
             </div>
-            
-            <div class="bg-white rounded-xl p-6 card-shadow stat-card">
+
+            <div class="glass-effect rounded-xl p-6 card-shadow stat-card">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-600 text-sm font-medium">AI Model</p>
-                        <p class="text-lg font-bold text-orange-600 mt-2">Groq Llama 3.3 70B</p>
+                        <p class="text-gray-600 text-sm font-semibold">AI Model</p>
+                        <p class="text-sm font-bold text-gray-700 mt-2" id="aiStatus">Groq Llama 3.3 70B</p>
                     </div>
-                    <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-robot text-orange-600 text-xl"></i>
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <i class="fas fa-robot text-gray-600 text-2xl"></i>
                     </div>
                 </div>
             </div>
@@ -273,59 +315,68 @@
 
         <!-- Main Content Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Left Column - Patient Information Form -->
-            <div class="bg-white rounded-2xl p-8 card-shadow-lg">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        <i class="fas fa-user-injured text-blue-600 mr-2"></i>
-                        Patient Information
-                    </h2>
-                    <button onclick="document.getElementById('templatesModal').style.display='flex'" 
-                        class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all">
-                        <i class="fas fa-file-medical mr-2"></i>Templates
+            <!-- Left Column: Patient Form -->
+            <div class="glass-effect rounded-xl p-6 card-shadow">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-user-md text-blue-600 mr-3"></i>
+                    Patient Information
+                </h2>
+
+                <div class="flex gap-2 mb-6">
+                    <button onclick="openTemplatesModal()" 
+                        class="flex-1 bg-gradient-to-r from-purple-600 to-purple-700 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-purple-800 transition-all">
+                        <i class="fas fa-file-medical mr-2"></i>
+                        Templates
+                    </button>
+                    <button onclick="openPatientSearchModal()" 
+                        class="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white py-3 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all">
+                        <i class="fas fa-search mr-2"></i>
+                        Search Patient
                     </button>
                 </div>
 
-                <form id="prescriptionForm" class="space-y-6">
-                    <!-- Patient Name with Voice & Search -->
+                <form id="prescriptionForm" class="space-y-4">
                     <div class="voice-input-wrapper">
                         <label class="block text-gray-700 font-semibold mb-2">
                             Patient Full Name
                             <span class="text-red-500">*</span>
-                            <span class="text-xs text-gray-500 ml-2">(Click 🔍 to search or 🎤 to speak)</span>
+                            <span class="text-sm text-gray-500 font-normal">(Click 🔍 to search or 🎤 to speak)</span>
                         </label>
                         <div class="relative">
                             <input type="text" id="patientName" required
-                                class="w-full px-4 py-3 input-field rounded-lg focus:outline-none input-with-voice"
-                                placeholder="Enter or speak patient name">
-                            <button type="button" class="voice-btn" onclick="startVoiceInput('patientName')" title="Voice Input">
-                                <i class="fas fa-microphone text-blue-600"></i>
-                            </button>
+                                class="w-full px-4 py-3 pr-24 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent input-field"
+                                placeholder="Enter patient's full name">
+                            <div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-2">
+                                <button type="button" onclick="openPatientSearchModal()" 
+                                    class="bg-blue-100 text-blue-600 px-3 py-2 rounded-lg hover:bg-blue-200 transition-all">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                                <button type="button" onclick="startVoiceInput('patientName')" 
+                                    class="bg-blue-100 text-blue-600 px-3 py-2 rounded-lg hover:bg-blue-200 transition-all">
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Age & Gender Row -->
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="voice-input-wrapper">
+                        <div>
                             <label class="block text-gray-700 font-semibold mb-2">
                                 Age (Years)
                                 <span class="text-red-500">*</span>
                             </label>
-                            <input type="number" id="patientAge" required min="0" max="150"
-                                class="w-full px-4 py-3 input-field rounded-lg focus:outline-none input-with-voice"
+                            <input type="number" id="age" required min="0" max="150"
+                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent input-field"
                                 placeholder="Age">
-                            <button type="button" class="voice-btn" onclick="startVoiceInput('patientAge')" title="Voice Input">
-                                <i class="fas fa-microphone text-blue-600"></i>
-                            </button>
                         </div>
-                        
+
                         <div>
                             <label class="block text-gray-700 font-semibold mb-2">
                                 Gender
                                 <span class="text-red-500">*</span>
                             </label>
-                            <select id="patientGender" required
-                                class="w-full px-4 py-3 input-field rounded-lg focus:outline-none">
+                            <select id="gender" required
+                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent input-field">
                                 <option value="">Select</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
@@ -334,67 +385,66 @@
                         </div>
                     </div>
 
-                    <!-- Clinical Symptoms with Voice -->
                     <div class="voice-input-wrapper">
                         <label class="block text-gray-700 font-semibold mb-2">
                             Clinical Symptoms & Complaints
                             <span class="text-red-500">*</span>
-                            <span class="text-xs text-gray-500 ml-2">(Click 🎤 to speak)</span>
+                            <span class="text-sm text-gray-500 font-normal">(Click 🎤 to speak)</span>
                         </label>
-                        <textarea id="symptoms" required rows="4"
-                            class="w-full px-4 py-3 input-field rounded-lg focus:outline-none input-with-voice"
-                            placeholder="Describe symptoms or click microphone to speak..."></textarea>
-                        <button type="button" class="voice-btn voice-btn-textarea" onclick="startVoiceInput('symptoms')" title="Voice Input">
-                            <i class="fas fa-microphone text-blue-600"></i>
-                        </button>
+                        <div class="relative">
+                            <textarea id="symptoms" required rows="4"
+                                class="w-full px-4 py-3 pr-16 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent input-field resize-none"
+                                placeholder="Describe symptoms, complaints, and medical history..."></textarea>
+                            <button type="button" onclick="startVoiceInput('symptoms')" 
+                                class="absolute right-3 top-3 bg-blue-100 text-blue-600 px-3 py-2 rounded-lg hover:bg-blue-200 transition-all">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Action Buttons -->
-                    <div class="flex gap-4">
+                    <div class="flex gap-4 pt-4">
                         <button type="submit" 
-                            class="flex-1 btn-primary text-white py-4 rounded-lg font-semibold text-lg shadow-lg">
+                            class="flex-1 btn-primary text-white py-4 rounded-lg font-bold text-lg shadow-lg">
                             <i class="fas fa-magic mr-2"></i>
                             Generate AI Prescription
                         </button>
                         <button type="button" onclick="resetForm()" 
-                            class="px-6 py-4 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-all">
+                            class="px-8 bg-gray-200 text-gray-700 py-4 rounded-lg font-semibold hover:bg-gray-300 transition-all">
                             <i class="fas fa-redo mr-2"></i>
                             Reset
                         </button>
                     </div>
                 </form>
 
-                <!-- Voice Status Indicator -->
-                <div id="voiceStatus" class="mt-4 p-4 bg-blue-50 border-l-4 border-blue-600 rounded-lg" style="display: none;">
-                    <div class="flex items-center">
-                        <i class="fas fa-microphone-alt text-blue-600 text-xl mr-3 animate-pulse"></i>
+                <!-- Voice Listening Indicator -->
+                <div id="voiceIndicator" class="mt-4 p-4 bg-red-50 border-2 border-red-200 rounded-lg" style="display: none;">
+                    <div class="flex items-center gap-3">
+                        <div class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
                         <div>
-                            <p class="font-semibold text-blue-800">Listening...</p>
-                            <p class="text-sm text-blue-600 mt-1">Speak clearly into your microphone</p>
+                            <p class="font-semibold text-red-800">Listening...</p>
+                            <p class="text-sm text-red-600">Speak clearly into your microphone</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column - Prescription Preview -->
-            <div class="bg-white rounded-2xl p-8 card-shadow-lg">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        <i class="fas fa-file-medical text-blue-600 mr-2"></i>
+            <!-- Right Column: Prescription Preview -->
+            <div class="glass-effect rounded-xl p-6 card-shadow">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                        <i class="fas fa-file-medical-alt text-blue-600 mr-3"></i>
                         Prescription Preview
                     </h2>
                     <div class="flex gap-2">
-                        <button onclick="document.getElementById('settingsModal').style.display='flex'" 
-                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all"
-                            title="Settings">
-                            <i class="fas fa-cog"></i>
-                            <span class="ml-2 hidden md:inline">Settings</span>
+                        <button onclick="openSettingsModal()" 
+                            class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-all">
+                            <i class="fas fa-cog mr-2"></i>
+                            Settings
                         </button>
-                        <button onclick="document.getElementById('historyModal').style.display='flex'" 
-                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all"
-                            title="History">
-                            <i class="fas fa-history"></i>
-                            <span class="ml-2 hidden md:inline">History (<span id="historyCount">0</span>)</span>
+                        <button onclick="openHistoryModal()" 
+                            class="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-all">
+                            <i class="fas fa-history mr-2"></i>
+                            History (<span id="historyCount">0</span>)
                         </button>
                     </div>
                 </div>
@@ -429,8 +479,7 @@
         </div>
     </div>
     
-    <!-- ULTIMATE LOGO FIX - LOAD ABSOLUTELY FIRST -->
-    <script src="ultimate-logo-fix.js"></script>
+    <!-- ULTIMATE LOGO FIX - LOAD ABSOLUTELY FIRST -->\n    <script src=\"ultimate-logo-fix.js\"></script>
     
     <!-- MODALS FIX - MUST BE LOADED FIRST -->
     <script src="add-missing-modals.js"></script>
