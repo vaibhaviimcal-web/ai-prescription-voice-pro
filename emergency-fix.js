@@ -44,13 +44,16 @@
         // 1. Load gender dropdown fix (HIGHEST PRIORITY)
         loadScript('fix-gender-dropdown.js', 'Gender dropdown fix', 0);
         
-        // 2. Load API key validation fix
+        // 2. Load AI status display fix
+        loadScript('fix-ai-status-display.js', 'AI status display fix', 50);
+        
+        // 3. Load API key validation fix
         loadScript('fix-api-key-validation.js', 'API key validation fix', 100);
         
-        // 3. Load template display fix (horizontal pills)
+        // 4. Load template display fix (horizontal pills)
         loadScript('fix-template-display.js', 'Template display fix', 150);
         
-        // 4. Load form and generation fix
+        // 5. Load form and generation fix
         loadScript('fix-form-and-generation.js', 'Form and generation fix', 200);
     }
     
