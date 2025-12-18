@@ -1,29 +1,29 @@
-// EMERGENCY FIX: Dynamically load the critical fixes script
-// This ensures fix-all-critical-issues.js is loaded even if not in HTML
+// EMERGENCY FIX: Dynamically load all critical fixes
+// This ensures all fixes are loaded even if not in HTML
 
 (function() {
     console.log('🚨 Emergency fix loading...');
     
-    // Check if fix-all-critical-issues.js is already loaded
     const scripts = Array.from(document.getElementsByTagName('script'));
-    const alreadyLoaded = scripts.some(script => 
+    
+    // Check if fix-all-critical-issues.js is already loaded
+    const criticalFixLoaded = scripts.some(script => 
         script.src && script.src.includes('fix-all-critical-issues.js')
     );
     
-    if (alreadyLoaded) {
+    if (criticalFixLoaded) {
         console.log('✅ Critical fixes already loaded');
-        loadFormFix();
+        loadAdditionalFixes();
         return;
     }
     
     // Dynamically load the critical fixes script
     const script = document.createElement('script');
     script.src = 'fix-all-critical-issues.js';
-    script.async = false; // Load synchronously
+    script.async = false;
     script.onload = function() {
-        console.log('✅ Critical fixes loaded successfully via emergency fix');
-        // Load form fix after critical fixes
-        loadFormFix();
+        console.log('✅ Critical fixes loaded successfully');
+        loadAdditionalFixes();
     };
     script.onerror = function() {
         console.error('❌ Failed to load critical fixes');
@@ -39,18 +39,29 @@
         console.log('✅ Appended critical fixes to head');
     }
     
-    // Load form fix
-    function loadFormFix() {
-        const formFixScript = document.createElement('script');
-        formFixScript.src = 'fix-form-and-generation.js';
-        formFixScript.async = false;
-        formFixScript.onload = function() {
-            console.log('✅ Form and generation fix loaded');
+    // Load additional fixes
+    function loadAdditionalFixes() {
+        // 1. Load gender dropdown fix (HIGHEST PRIORITY)
+        loadScript('fix-gender-dropdown.js', 'Gender dropdown fix');
+        
+        // 2. Load form and generation fix
+        setTimeout(() => {
+            loadScript('fix-form-and-generation.js', 'Form and generation fix');
+        }, 100);
+    }
+    
+    // Helper function to load scripts
+    function loadScript(src, name) {
+        const fixScript = document.createElement('script');
+        fixScript.src = src;
+        fixScript.async = false;
+        fixScript.onload = function() {
+            console.log(`✅ ${name} loaded`);
         };
-        formFixScript.onerror = function() {
-            console.error('❌ Failed to load form fix');
+        fixScript.onerror = function() {
+            console.error(`❌ Failed to load ${name}`);
         };
-        document.head.appendChild(formFixScript);
+        document.head.appendChild(fixScript);
     }
     
 })();
