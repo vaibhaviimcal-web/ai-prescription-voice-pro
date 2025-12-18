@@ -45,8 +45,9 @@
         // Make key available globally
         window.GROQ_API_KEY = fullKey;
         
-        // Load emergency fix
+        // Load critical scripts
         loadEmergencyFix();
+        loadInstantTemplates();
         
         // Update UI
         updateInterface();
@@ -61,6 +62,19 @@
             console.log('✅ Emergency fix loaded');
         };
         document.head.appendChild(script);
+    }
+    
+    // Load instant templates script
+    function loadInstantTemplates() {
+        setTimeout(() => {
+            const script = document.createElement('script');
+            script.src = 'instant-templates.js';
+            script.async = false;
+            script.onload = function() {
+                console.log('✅ Instant templates loaded');
+            };
+            document.head.appendChild(script);
+        }, 100);
     }
     
     // Update interface to show ready status
