@@ -1,0 +1,24 @@
+CRITICAL UPDATE NEEDED FOR index.html
+
+Find this section (around line 484-486):
+
+<!-- MODALS FIX - MUST BE LOADED FIRST -->
+<script src="add-missing-modals.js"></script>
+
+<!-- TEMPLATES AND LOGO FIX - LOAD VERY EARLY -->
+
+REPLACE IT WITH:
+
+<!-- MODALS FIX - MUST BE LOADED FIRST -->
+<script src="add-missing-modals.js"></script>
+
+<!-- CRITICAL FIX - SETTINGS, TEMPLATES, HISTORY -->
+<script src="fix-all-critical-issues.js"></script>
+
+<!-- TEMPLATES AND LOGO FIX - LOAD VERY EARLY -->
+
+This adds the critical fix script that makes:
+✅ Settings modal work
+✅ Templates work (8 pre-defined templates)
+✅ History work
+✅ Prescription generation work
