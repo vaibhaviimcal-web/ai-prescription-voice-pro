@@ -47,7 +47,10 @@
         // 2. Load API key validation fix
         loadScript('fix-api-key-validation.js', 'API key validation fix', 100);
         
-        // 3. Load form and generation fix
+        // 3. Load template display fix (horizontal pills)
+        loadScript('fix-template-display.js', 'Template display fix', 150);
+        
+        // 4. Load form and generation fix
         loadScript('fix-form-and-generation.js', 'Form and generation fix', 200);
     }
     
