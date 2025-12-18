@@ -39,29 +39,32 @@
         console.log('✅ Appended critical fixes to head');
     }
     
-    // Load additional fixes
+    // Load additional fixes in priority order
     function loadAdditionalFixes() {
         // 1. Load gender dropdown fix (HIGHEST PRIORITY)
-        loadScript('fix-gender-dropdown.js', 'Gender dropdown fix');
+        loadScript('fix-gender-dropdown.js', 'Gender dropdown fix', 0);
         
-        // 2. Load form and generation fix
-        setTimeout(() => {
-            loadScript('fix-form-and-generation.js', 'Form and generation fix');
-        }, 100);
+        // 2. Load API key validation fix
+        loadScript('fix-api-key-validation.js', 'API key validation fix', 100);
+        
+        // 3. Load form and generation fix
+        loadScript('fix-form-and-generation.js', 'Form and generation fix', 200);
     }
     
-    // Helper function to load scripts
-    function loadScript(src, name) {
-        const fixScript = document.createElement('script');
-        fixScript.src = src;
-        fixScript.async = false;
-        fixScript.onload = function() {
-            console.log(`✅ ${name} loaded`);
-        };
-        fixScript.onerror = function() {
-            console.error(`❌ Failed to load ${name}`);
-        };
-        document.head.appendChild(fixScript);
+    // Helper function to load scripts with delay
+    function loadScript(src, name, delay) {
+        setTimeout(() => {
+            const fixScript = document.createElement('script');
+            fixScript.src = src;
+            fixScript.async = false;
+            fixScript.onload = function() {
+                console.log(`✅ ${name} loaded`);
+            };
+            fixScript.onerror = function() {
+                console.error(`❌ Failed to load ${name}`);
+            };
+            document.head.appendChild(fixScript);
+        }, delay);
     }
     
 })();
