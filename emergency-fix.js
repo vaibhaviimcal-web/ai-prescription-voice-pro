@@ -47,13 +47,16 @@
         // 2. Load AI status display fix
         loadScript('fix-ai-status-display.js', 'AI status display fix', 50);
         
-        // 3. Load API key validation fix
+        // 3. Remove template button
+        loadScript('remove-template-button.js', 'Remove template button', 75);
+        
+        // 4. Load API key validation fix
         loadScript('fix-api-key-validation.js', 'API key validation fix', 100);
         
-        // 4. Load template display fix (horizontal pills)
+        // 5. Load template display fix (horizontal pills)
         loadScript('fix-template-display.js', 'Template display fix', 150);
         
-        // 5. Load form and generation fix
+        // 6. Load form and generation fix
         loadScript('fix-form-and-generation.js', 'Form and generation fix', 200);
     }
     
