@@ -6,44 +6,39 @@
     
     console.log('⚙️ Loading configuration...');
     
-    // Valid Groq API Key (split to avoid detection)
-    const part1 = 'gsk_';
-    const part2 = 'w9S4reP';
-    const part3 = 'FA7eo1d';
-    const part4 = 'OxHwOZ';
-    const part5 = 'WGdyb3F';
-    const part6 = 'YkmVb3d';
-    const part7 = 'w8TP6g';
-    const part8 = '8HRhKP';
-    const part9 = 'MxUhcX';
-    
-    // Combine parts to form complete key
-    const fullKey = part1 + part2 + part3 + part4 + part5 + part6 + part7 + part8 + part9;
-    
     // Setup function
     function initializeApp() {
-        // Always set the key (override any invalid keys)
-        localStorage.setItem('groqApiKey', fullKey);
-        console.log('✅ API Key configured');
+        // Check if user already has a valid API key
+        const existingKey = localStorage.getItem('groqApiKey');
         
-        // Set default clinic info with Dr. Kumar Vaibhav
-        const defaultBranding = {
-            clinicName: 'MediScript AI',
-            tagline: 'Enterprise Medical Platform',
-            doctorName: 'Dr. Kumar Vaibhav',
-            credentials: 'MBBS, MD',
-            regNumber: 'MED/2024/12345',
-            phone: '+91 9999456126',
-            email: 'vaibhav.iimcal@gmail.com',
-            address: '123 Medical Center, Healthcare District'
-        };
+        if (!existingKey || existingKey.trim() === '') {
+            console.log('⚠️ No API key found - user needs to configure in Settings');
+        } else {
+            console.log('✅ API Key found in localStorage');
+            // Make key available globally
+            window.GROQ_API_KEY = existingKey;
+        }
         
-        // Always update with latest default branding
-        localStorage.setItem('clinicBranding', JSON.stringify(defaultBranding));
-        console.log('✅ Default branding set - Dr. Kumar Vaibhav');
+        // Set default clinic info with Dr. Kumar Vaibhav (only if not already set)
+        const existingBranding = localStorage.getItem('clinicBranding');
         
-        // Make key available globally
-        window.GROQ_API_KEY = fullKey;
+        if (!existingBranding) {
+            const defaultBranding = {
+                clinicName: 'MediScript AI',
+                tagline: 'Enterprise Medical Platform',
+                doctorName: 'Dr. Kumar Vaibhav',
+                credentials: 'MBBS, MD',
+                regNumber: 'MED/2024/12345',
+                phone: '+91 9999456126',
+                email: 'vaibhav.iimcal@gmail.com',
+                address: '123 Medical Center, Healthcare District'
+            };
+            
+            localStorage.setItem('clinicBranding', JSON.stringify(defaultBranding));
+            console.log('✅ Default branding set - Dr. Kumar Vaibhav');
+        } else {
+            console.log('✅ Using existing clinic branding');
+        }
         
         // Load critical scripts
         loadEmergencyFix();
@@ -83,41 +78,47 @@
             // Update clinic name in header
             const clinicNameEl = document.getElementById('clinicName');
             if (clinicNameEl) {
-                clinicNameEl.textContent = 'MediScript AI';
+                const branding = JSON.parse(localStorage.getItem('clinicBranding') || '{}');
+                clinicNameEl.textContent = branding.clinicName || 'MediScript AI';
             }
             
             // Update doctor name in header
             const doctorNameEl = document.getElementById('doctorName');
             if (doctorNameEl) {
-                doctorNameEl.textContent = 'Dr. Kumar Vaibhav';
+                const branding = JSON.parse(localStorage.getItem('clinicBranding') || '{}');
+                doctorNameEl.textContent = branding.doctorName || 'Dr. Kumar Vaibhav';
             }
             
             // Update registration number
             const regNumberEl = document.getElementById('regNumber');
             if (regNumberEl) {
-                regNumberEl.textContent = 'Reg. No: MED/2024/12345';
+                const branding = JSON.parse(localStorage.getItem('clinicBranding') || '{}');
+                regNumberEl.textContent = `Reg. No: ${branding.regNumber || 'MED/2024/12345'}`;
             }
             
-            // Update AI status
+            // Update AI status based on API key
             const statusEl = document.getElementById('aiStatus');
+            const apiKey = localStorage.getItem('groqApiKey');
+            
             if (statusEl) {
-                statusEl.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <span class="text-green-600 font-semibold">AI Ready - Groq Llama 3.3 70B</span>
-                    </div>
-                `;
+                if (apiKey && apiKey.trim() !== '') {
+                    statusEl.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span class="text-green-600 font-semibold">AI Ready - Groq Llama 3.3 70B</span>
+                        </div>
+                    `;
+                } else {
+                    statusEl.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                            <span class="text-yellow-600 font-semibold">Configure API Key in Settings</span>
+                        </div>
+                    `;
+                }
             }
             
-            // Hide warning messages
-            const warnings = document.querySelectorAll('.bg-yellow-50, .bg-yellow-100');
-            warnings.forEach(w => {
-                if (w.textContent.includes('Not Configured') || w.textContent.includes('configure')) {
-                    w.style.display = 'none';
-                }
-            });
-            
-            console.log('✅ Interface updated - Dr. Kumar Vaibhav - App ready to use!');
+            console.log('✅ Interface updated - App ready!');
         }, 100);
     }
     
