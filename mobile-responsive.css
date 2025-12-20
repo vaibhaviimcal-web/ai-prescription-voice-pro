@@ -1,0 +1,406 @@
+/* Mobile Responsive Styles for MediScript AI */
+
+/* Base Mobile Optimizations */
+@media (max-width: 768px) {
+    
+    /* Body and Container */
+    body {
+        font-size: 14px;
+        overflow-x: hidden;
+    }
+    
+    /* Top Navigation - Mobile */
+    .bg-gradient-to-r.from-blue-600 {
+        padding: 12px 16px !important;
+    }
+    
+    .bg-gradient-to-r .flex.justify-between {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start !important;
+    }
+    
+    #clinicLogo {
+        width: 40px !important;
+        height: 40px !important;
+    }
+    
+    #clinicNameDisplay {
+        font-size: 18px !important;
+    }
+    
+    #clinicTaglineDisplay {
+        font-size: 11px !important;
+    }
+    
+    #doctorNameDisplay {
+        font-size: 13px !important;
+    }
+    
+    #regNumberDisplay {
+        font-size: 11px !important;
+    }
+    
+    /* Patient Portal Button - Mobile */
+    .bg-gradient-to-r a[href="patient-portal.html"] {
+        width: 100%;
+        text-align: center;
+        padding: 10px 16px !important;
+        font-size: 13px !important;
+    }
+    
+    /* AI Status Banner - Mobile */
+    #aiStatusBanner {
+        margin: 16px 12px !important;
+        padding: 12px !important;
+    }
+    
+    #aiStatusBanner .flex {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start !important;
+    }
+    
+    #aiStatusBanner button {
+        width: 100%;
+        padding: 10px !important;
+        font-size: 13px !important;
+    }
+    
+    /* Main Container - Mobile */
+    .w-full.px-6 {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+    
+    /* Statistics Cards - Mobile Stack */
+    .grid.grid-cols-1.md\:grid-cols-4 {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+    
+    .stat-card {
+        padding: 16px !important;
+    }
+    
+    .stat-card p.text-3xl {
+        font-size: 24px !important;
+    }
+    
+    .stat-card .bg-blue-100,
+    .stat-card .bg-green-100,
+    .stat-card .bg-purple-100,
+    .stat-card .bg-orange-100 {
+        padding: 12px !important;
+    }
+    
+    .stat-card i {
+        font-size: 20px !important;
+    }
+    
+    /* Main Grid Layout - Mobile Stack */
+    .grid.grid-cols-1.lg\:grid-cols-2 {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+    
+    /* Patient Information Card - Mobile */
+    .card-shadow {
+        padding: 16px !important;
+    }
+    
+    /* Search Patient Button - Mobile */
+    button:has(i.fa-search) {
+        width: 100%;
+        padding: 12px !important;
+        font-size: 14px !important;
+    }
+    
+    /* Quick Templates - Mobile Scroll */
+    .flex.flex-wrap.gap-2 {
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 8px;
+    }
+    
+    .flex.flex-wrap.gap-2 button {
+        flex-shrink: 0;
+        font-size: 12px !important;
+        padding: 8px 12px !important;
+        white-space: nowrap;
+    }
+    
+    /* Form Inputs - Mobile */
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+        font-size: 16px !important; /* Prevents zoom on iOS */
+        padding: 12px !important;
+    }
+    
+    textarea {
+        min-height: 120px !important;
+    }
+    
+    /* Voice Input Button - Mobile */
+    button:has(i.fa-microphone) {
+        padding: 12px !important;
+        min-width: 44px; /* Touch target size */
+        min-height: 44px;
+    }
+    
+    /* Generate Button - Mobile */
+    button[type="submit"],
+    button:has(i.fa-wand-magic-sparkles) {
+        width: 100%;
+        padding: 14px !important;
+        font-size: 15px !important;
+        margin-top: 12px;
+    }
+    
+    /* Reset Button - Mobile */
+    button:has(i.fa-rotate-right) {
+        width: 100%;
+        padding: 12px !important;
+        font-size: 14px !important;
+    }
+    
+    /* Prescription Preview - Mobile */
+    #prescriptionPreview {
+        padding: 16px !important;
+    }
+    
+    .prescription-header {
+        padding: 12px !important;
+    }
+    
+    .prescription-header h2 {
+        font-size: 18px !important;
+    }
+    
+    .prescription-content {
+        padding: 12px !important;
+    }
+    
+    .prescription-section h3 {
+        font-size: 15px !important;
+    }
+    
+    .medicine-item {
+        padding: 10px !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .medicine-name {
+        font-size: 14px !important;
+    }
+    
+    .medicine-dosage {
+        font-size: 12px !important;
+    }
+    
+    /* Action Buttons - Mobile */
+    .flex.gap-4.mt-6 {
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+    
+    .flex.gap-4.mt-6 button {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 14px !important;
+    }
+    
+    /* Settings and History Buttons - Mobile */
+    .flex.items-center.justify-between.mb-6 {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 12px;
+    }
+    
+    .flex.items-center.justify-between.mb-6 button {
+        width: 100%;
+    }
+    
+    /* Modal - Mobile */
+    .modal-content {
+        width: 95% !important;
+        max-width: 95% !important;
+        margin: 20px auto !important;
+        max-height: 90vh !important;
+        overflow-y: auto !important;
+    }
+    
+    .modal-content h2 {
+        font-size: 18px !important;
+    }
+    
+    /* Settings Modal - Mobile */
+    .space-y-4 label {
+        font-size: 13px !important;
+    }
+    
+    /* History Modal - Mobile */
+    .history-item {
+        padding: 12px !important;
+    }
+    
+    .history-item h4 {
+        font-size: 14px !important;
+    }
+    
+    .history-item p {
+        font-size: 12px !important;
+    }
+    
+    /* Template Cards - Mobile */
+    .template-card {
+        padding: 12px !important;
+    }
+    
+    .template-card h3 {
+        font-size: 14px !important;
+    }
+    
+    .template-card p {
+        font-size: 11px !important;
+    }
+    
+    /* Tab Buttons - Mobile */
+    .flex.gap-2.mb-4 {
+        flex-wrap: wrap;
+    }
+    
+    .tab-button {
+        font-size: 13px !important;
+        padding: 8px 12px !important;
+    }
+    
+    /* Scrollbar Styling for Mobile */
+    ::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+    
+    /* Touch Improvements */
+    button,
+    a,
+    input,
+    select,
+    textarea {
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Prevent Text Selection on Buttons */
+    button {
+        -webkit-user-select: none;
+        user-select: none;
+    }
+}
+
+/* Tablet Optimizations (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    
+    /* Statistics - 2 Columns on Tablet */
+    .grid.grid-cols-1.md\:grid-cols-4 {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    /* Main Grid - Single Column on Tablet */
+    .grid.grid-cols-1.lg\:grid-cols-2 {
+        grid-template-columns: 1fr !important;
+    }
+    
+    /* Adjust Padding */
+    .w-full.px-6 {
+        padding-left: 24px !important;
+        padding-right: 24px !important;
+    }
+}
+
+/* Small Mobile (< 375px) */
+@media (max-width: 375px) {
+    
+    body {
+        font-size: 13px;
+    }
+    
+    #clinicNameDisplay {
+        font-size: 16px !important;
+    }
+    
+    .stat-card p.text-3xl {
+        font-size: 20px !important;
+    }
+    
+    button {
+        font-size: 13px !important;
+        padding: 10px !important;
+    }
+    
+    .modal-content {
+        width: 98% !important;
+    }
+}
+
+/* Landscape Mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+    
+    .modal-content {
+        max-height: 95vh !important;
+        overflow-y: auto !important;
+    }
+    
+    .bg-gradient-to-r.from-blue-600 {
+        padding: 8px 16px !important;
+    }
+    
+    #aiStatusBanner {
+        padding: 8px !important;
+    }
+}
+
+/* Print Styles - Mobile */
+@media print {
+    
+    /* Hide UI Elements */
+    .bg-gradient-to-r.from-blue-600,
+    #aiStatusBanner,
+    .grid.grid-cols-1.md\:grid-cols-4,
+    button,
+    .flex.gap-4.mt-6 {
+        display: none !important;
+    }
+    
+    /* Full Width Prescription */
+    #prescriptionPreview {
+        width: 100% !important;
+        box-shadow: none !important;
+        border: 1px solid #000 !important;
+    }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Dark Mode Support (Optional) */
+@media (prefers-color-scheme: dark) {
+    /* Add dark mode styles if needed */
+}
