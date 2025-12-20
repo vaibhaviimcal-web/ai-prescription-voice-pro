@@ -26,7 +26,7 @@
         
         // Clean existing key
         if (existingKey) {
-            existingKey = existingKey.trim().replace(/['"]/g, '');
+            existingKey = existingKey.trim().replace(/['\"]/g, '');
         }
         
         // If no valid key exists, use demo key
@@ -60,12 +60,25 @@
             console.log('✅ Using existing clinic branding');
         }
         
-        // Load critical scripts
+        // Load critical scripts and styles
+        loadMobileCSS();
         loadEmergencyFix();
         loadInstantTemplates();
         
         // Update UI
         updateInterface();
+    }
+    
+    // Load mobile responsive CSS
+    function loadMobileCSS() {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'mobile-responsive.css';
+        link.type = 'text/css';
+        link.onload = function() {
+            console.log('📱 Mobile responsive CSS loaded');
+        };
+        document.head.appendChild(link);
     }
     
     // Load emergency fix script
